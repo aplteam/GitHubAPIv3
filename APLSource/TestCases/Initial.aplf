@@ -1,0 +1,2 @@
+ Initial
+ ∆MyGitHubAPI←⎕NEW ##.GitHubAPIv3(,⊂'aplteam')

@@ -1,0 +1,229 @@
+:Class GitHubAPIv3
+⍝ This clas offers methods that allows one to communicate with GitHub by using GitHub's REST API from Dyalog APL.
+⍝ Note that this is version 3 of the GitHub API; the coming version 4 is **_not_** a REST interface!\\
+⍝ Most methods of this class become available only by instanciating the class. At the moment this might seem
+⍝ unnecessary because there is only one constructor requiring an owner's name, but this will change once OAuth
+⍝ is going to be implemented.\\
+⍝ The class came into being because APL Team needed such a class in order to deal with the members of the APLTree
+⍝ and the APL-cation projects.\\
+⍝ Note that this class needs **at least Dyalog 16.0** (⎕JSON).\\
+⍝ The project lives on <https://github.com/aplteam/GitHubAPIv3>\\
+⍝ It is part of the [APLTree library](https://github.com/aplteam/apltree/wiki)
+⍝ Kai Jaeger ⋄ APL Team Ltd
+
+    :Include ##.APLTreeUtils
+
+    ⎕IO←1 ⋄ ⎕ML←1
+
+    ∇ r←Version
+      :Access Public Shared
+      r←'GitHub' '0.0.1.3' '2018-12-31'
+    ∇
+
+    ∇ History
+      :Access Public Shared
+    ⍝ * 0.0.1
+    ⍝   First release. 
+    ∇
+
+    :Property owner
+        ∇ r←Get
+          r←_owner
+        ∇
+    :EndProperty
+
+    ∇ make1(owner)
+      :Access Public Instance
+      :Implements Constructor
+      _owner←owner
+    ∇
+    
+    ∇ (rc msg ns)←GetLatestRelease repoName;gitPath
+      :Access Public Instance
+    ⍝ Returns data regarding the latest release. Drafts and beta releases are ignored.\\
+    ⍝ You must use https:// (protocol), or do not specify a protocol at all.\\
+    ⍝ `⍵` : Name of the repository.\\
+    ⍝ `←` : Same as `GetJson` - see there for details.
+      gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases/latest'
+      (rc msg ns)←GetJson gitPath
+      :If 0=rc
+          ns.⎕DF '[JSON object: Release (',repoName,'-',ns.tag_name,')]'
+      :EndIf
+    ∇
+
+    ∇ (rc msg ns)←GetReleaseByTagName(repoName tagName);gitPath
+      :Access Public Instance
+    ⍝ Fetches the release with `tagName` from `repoName`.\\
+    ⍝ You must use https:// (protocol), or do not specify a protocol at all.
+    ⍝ ## Right argument
+    ⍝ * Name of the repository
+    ⍝ * The tag name
+    ⍝ `←` : Same as `GetJson` - see there for details.
+      gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases/tags/',tagName
+      (rc msg ns)←GetJson gitPath
+      :If 0=rc
+          ns.⎕DF'[JSON object: release-',tagName,']'
+      :EndIf
+    ∇
+
+    ∇ (rc msg ns)←GetAllReleases repoName;gitPath
+      :Access Public Instance
+    ⍝ Returns all releases of a given repository.\\
+    ⍝ Notes:
+    ⍝ * Pre-release are included
+    ⍝ * Users without "Push" access will **_not_** see any draft releases\\
+    ⍝ You must use https:// (protocol), or do not specify a protocol at all.
+    ⍝ `⍵` : Name of the repository.\\
+    ⍝ `←` : Same as `GetJson` - see there for details.
+      gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/tags'
+      (rc msg ns)←GetJson gitPath
+    ∇
+
+    ∇ (rc msg ns)←GetAllRepos;gitPath
+      :Access Public Instance
+    ⍝ Returns data of all **public** repositories for the current owner.\\
+      gitPath←'https://api.github.com/users/',(_owner),'/repos'
+      (rc msg ns)←GetJson gitPath
+    ∇
+
+    ∇ number←CastTagname2Number text;vec;bool
+      :Access Public Shared
+    ⍝ Takes something like `v12.34.567` or `v123.4.5.6789` and returns 1234567 and 1234567.1234 respectively.\\
+    ⍝ The items are called major.minor.patch.built with "built" being optional.\\
+    ⍝ In case that is impossible (because `text` does not fulfil the criteria) `⍬` is returned.\\
+    ⍝ Assumptions:
+    ⍝ * `text` may or may not start with a non-digit. If there is one it will be removed.\\
+    ⍝   Therefore both `1.2.3` and `v.1.2.3` are valid input.
+    ⍝ * The remaining `text` must consist of nothing but digits and dots.
+    ⍝ * The first two numbers ("major" and "minor") must not be bigger than 99.
+    ⍝ * The third number ("path") must not be bigger than 999.
+    ⍝ * The optional last (forth) number must not be bigger than 99999.
+    ⍝ * `text` must come either with three numbers (as in `1.2.3`) or with four number (as in `1.2.3.9999`).
+    ⍝ However, even if all assumptions are fulfilled but the result is zero there is still a `⍬` returned.
+    ⍝ Note that leading zeros are mermitted. Therefor 1.2.3.001 is **_not_** a valid input.
+    ⍝ Examples:
+    ⍝ + 1.20.333 transforms into 120333
+    ⍝ + 12.12.123.12345 transforms into 1212123.12345
+    ⍝ If the tag name does not fulfil the assumptions the conversion might crash. In that case `⍬` is
+    ⍝ returned as result.
+      number←⍬
+      (bool vec)←'.'⎕VFI{⍵↓⍨~⎕D∊⍨⊃⍵}text
+      :If 3 4∊⍨⍴bool
+          vec←{⍵↑⍨3⌈4⌊⍴⍵}↑vec
+          :If 3=⍴vec
+              :If ∧/100 100 1000>vec
+              :AndIf 0=number←100 100 1000⊥vec
+                  number←⍬
+              :EndIf
+          :Else
+              :If ~∧/100 100 1000 100000>vec
+                  number←⍬
+              :ElseIf 0=number←100 100 1000 100000⊥vec
+                  number←⍬
+              :EndIf
+              number÷←100000
+          :EndIf
+      :EndIf
+    ∇
+
+    ∇ (rc msg endpoints)←GetAllEndpoints;gitPath;msg;rc
+      :Access Public Shared
+    ⍝ This method returns all REST endpoints offered by the API.\\
+    ⍝ It returns a namespace. Use `endpoint`'s built-in `List` function for an overview.
+    ⍝ `endpoints` is empty in case of an error.
+      gitPath←'https://api.github.com/'
+      endpoints←⎕NS''
+      (rc msg endpoints)←GetJson gitPath
+      :If 0=rc
+          endpoints.⎕FX'r←List' 'r←{⍵,[1.5]⍎¨⍵}⎕NL-2'
+      :EndIf
+    ∇
+
+⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ Private stuff
+
+      GetNoOfPages←{
+   ⍝ Takes HTTP headers and returns the number if pages. If there are not any a zero is returned.
+          headers←⍵
+          bool←'Link:'{⍺∘≡¨(⍴⍺)↑¨⍵}headers
+          0=+/bool:0
+          link←(bool⍳1)⊃headers
+          buff←' 'Split link
+          last←(¯1+⍴buff)⊃buff
+          buff←{⍵{(⍴'?page-')↓⍵[2]↑⍵[1]↓⍺}⊃'(&|\?)page=[0-9]{1,}'⎕S 0 1⊣⍵}last
+          ⊃⊃(//)⎕VFI buff
+      }
+
+      GetLinkToNextPage←{
+   ⍝ Takes HTTP headers and returns the link pointing to the next page, if any
+          headers←⍵
+          bool←'Link:'{⍺∘≡¨(⍴⍺)↑¨⍵}headers
+          0=+/bool:0
+          link←(bool⍳1)⊃headers
+          buff←' 'Split link
+          1↓¯2↓⊃1↓buff
+      }
+
+      SplitHeaders←{
+          headers←⍵↑⍨1⍳⍨(⎕UCS 10 13)⍷⍵
+          (⎕UCS 13 10)Split headers
+      }
+
+    ∇ txt←GetText obj;ts
+      ts←⎕NEW StreamReader obj   ⍝ text stream
+      txt←ts.ReadToEnd
+    ∇
+
+    ∇ (rc msg ns)←GetJson gitPath;cp;ServicePointManager;req;res;data;WebRequest;i;noOfPages;headers;owner
+    ⍝ Takes a path which must specify a valid GitHub API URL and returns the data from GitHub.\\
+    ⍝ `⍵`: Project URL, for example 'api.github.com/repos/aplteam/testrepo/releases/latest'
+    ⍝ `rc`
+    ⍝ : Either 0 for okay or an error code.\\
+    ⍝ `msg`
+    ⍝ : Is empty in case `rc←→0` but might offer addtional information otherwise.
+    ⍝ `ns`
+    ⍝ : Namespace with the data received from GitHub.
+      :If 0=⎕NC'_owner'
+          owner←'APL GitHub API'
+      :Else
+          owner←_owner
+      :EndIf
+      gitPath←'https://'{⍵,⍨⍺/⍨⍺≢(⍴⍺)↑⍵}Lowercase gitPath
+      rc←0
+      msg←''
+      ns←⎕NS''
+      :Trap 90
+          ⎕USING←'System.Net,system.dll' 'System.IO' 'System.Text'
+          cp←ServicePointManager.SecurityProtocol   ⍝ current protocol
+          ServicePointManager.SecurityProtocol←SecurityProtocolType.Tls12
+          req←WebRequest.CreateHttp⊂gitPath
+          req.UserAgent←owner                   ⍝ MUST NOT be empty: required by the github api!
+          req.Accept←'Accept: application/vnd.github.v3+json'
+          res←req.GetResponse
+          ServicePointManager.SecurityProtocol←cp
+          :If res.StatusCode≠res.StatusCode.OK
+              rc←res.StatusCode
+              msg←'HTTP error'
+              :Return
+          :EndIf
+          ns←⎕JSON GetText res.GetResponseStream
+          headers←SplitHeaders⍕res.Headers
+          :If 0<noOfPages←GetNoOfPages headers
+              :For i :In 1↓⍳noOfPages
+                  req←WebRequest.CreateHttp⊂GetLinkToNextPage headers
+                  req.UserAgent←owner           ⍝ MUST NOT be empty: required by the github api!
+                  res←req.GetResponse
+                  :If res.StatusCode≠res.StatusCode.OK
+                      rc←res.StatusCode
+                      msg←'HTTP error'
+                      :Return
+                  :EndIf
+                  ns,←⎕JSON GetText res.GetResponseStream
+              :EndFor
+          :EndIf
+      :Else
+          rc←90
+          msg←{⍵↓⍨1+⍵⍳':'}{⍵↑⍨1⍳⍨(⎕UCS 8 10)⍷⍵}⍕⎕EXCEPTION
+      :EndTrap
+    ∇
+
+:EndClass

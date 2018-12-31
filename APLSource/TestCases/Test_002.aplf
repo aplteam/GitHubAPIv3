@@ -1,0 +1,12 @@
+ R←Test_002(stopFlag batchFlag);⎕TRAP;data;more;rc
+⍝ Get information regarding the latest release with the dedicated method `GetLatestRelease`
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+ (rc more data)←∆MyGitHubAPI.GetLatestRelease'TestRepo'
+ →PassesIf 0=rc
+ →PassesIf 0=≢more
+ →PassesIf'aplteam'≡data.author.login
+ →PassesIf'v2.0.0'≡data.tag_name
+
+ R←∆OK
+⍝Done

@@ -1,0 +1,15 @@
+ R←Test_018(stopFlag batchFlag);⎕TRAP;data;more;rc
+⍝ ...
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+
+ R←∆Inactive
+ :Return
+
+ (rc more data)←##.GitHubAPIv3.
+ →PassesIf 0=rc
+ →PassesIf 0=≢more
+ ⍝ ...
+
+ R←∆OK
+⍝Done
