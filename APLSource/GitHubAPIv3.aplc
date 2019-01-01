@@ -24,6 +24,8 @@
       :Access Public Shared
     ⍝ * 0.0.1
     ⍝   First release. 
+    ⍝\\
+    ⍝ For information regarding older versions see <https://github.com/aplteam/GitHubAPIv3/releases>
     ∇
 
     :Property owner
