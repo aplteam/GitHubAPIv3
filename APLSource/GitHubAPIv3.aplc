@@ -17,13 +17,15 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHub' '0.0.1.4' '2018-12-31'
+      r←'GitHub' '0.0.2.6' '2018-12-31'
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 0.0.2
+    ⍝   * Method `GetAllTopics` added.
     ⍝ * 0.0.1
-    ⍝   First release. 
+    ⍝   First release.
     ⍝\\
     ⍝ For information regarding older versions see <https://github.com/aplteam/GitHubAPIv3/releases>
     ∇
@@ -39,17 +41,17 @@
       :Implements Constructor
       _owner←owner
     ∇
-    
+
     ∇ (rc msg ns)←GetLatestRelease repoName;gitPath
       :Access Public Instance
     ⍝ Returns data regarding the latest release. Drafts and beta releases are ignored.\\
     ⍝ You must use https:// (protocol), or do not specify a protocol at all.\\
     ⍝ `⍵` : Name of the repository.\\
-    ⍝ `←` : Same as `GetJson` - see there for details.
+    ⍝ `←` : Same as `GetAllEndpoints` - see there for details.
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases/latest'
       (rc msg ns)←GetJson gitPath
       :If 0=rc
-          ns.⎕DF '[JSON object: Release (',repoName,'-',ns.tag_name,')]'
+          ns.⎕DF'[JSON object: Release (',repoName,'-',ns.tag_name,')]'
       :EndIf
     ∇
 
@@ -60,11 +62,11 @@
     ⍝ ## Right argument
     ⍝ * Name of the repository
     ⍝ * The tag name
-    ⍝ `←` : Same as `GetJson` - see there for details.
+    ⍝ `←` : Same as `GetAllEndpoints` - see there for details.
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases/tags/',tagName
       (rc msg ns)←GetJson gitPath
       :If 0=rc
-          ns.⎕DF'[JSON object: release-',tagName,']'
+          ns.⎕DF'[JSON object: Release (',repoName,'-',tagName,')]'
       :EndIf
     ∇
 
@@ -76,9 +78,27 @@
     ⍝ * Users without "Push" access will **_not_** see any draft releases\\
     ⍝ You must use https:// (protocol), or do not specify a protocol at all.
     ⍝ `⍵` : Name of the repository.\\
-    ⍝ `←` : Same as `GetJson` - see there for details.
+    ⍝ `←` : Same as `GetAllEndpoints` - see there for details.
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/tags'
       (rc msg ns)←GetJson gitPath
+      :If 0≠≢ns
+          ns.{⎕DF'[JSON Object: Release (',name,')]'}⊂⍬
+      :EndIf
+    ∇
+
+    ∇ (rc msg ns)←GetAllTopics repoName;gitPath;parms
+      :Access Public Instance
+    ⍝ Returns all topics of a given repository.\\
+    ⍝ You must use https:// (protocol), or do not specify a protocol at all.
+    ⍝ `⍵` : Name of the repository.\\
+    ⍝ `←` : Same as `GetAllEndpoints` - see there for details.
+      gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/topics'
+      parms←CreateParms
+      parms.Accepted←'application/vnd.github.mercy-preview+json'
+      (rc msg ns)←parms GetJson gitPath
+      :If 0=rc
+          ns.⎕DF'[JSON object: Release (',repoName,': topics)]'
+      :EndIf
     ∇
 
     ∇ (rc msg ns)←GetAllRepos;gitPath
@@ -86,6 +106,43 @@
     ⍝ Returns data of all **public** repositories for the current owner.\\
       gitPath←'https://api.github.com/users/',(_owner),'/repos'
       (rc msg ns)←GetJson gitPath
+      :If 0≠≢ns
+          ns.{⎕DF'[JSON Object: Repository (',name,')]'}⊂⍬
+      :EndIf
+    ∇
+
+    ∇ (rc msg endpoints)←GetAllEndpoints;gitPath;msg;rc
+      :Access Public Shared
+    ⍝ This method returns all REST endpoints offered by the API.\\
+    ⍝ It returns a namespace. Use `endpoint`'s built-in `List` function for an overview.
+    ⍝ `endpoints` is empty in case of an error.\\
+    ⍝ `rc`
+    ⍝ : Either 0 for okay or an error code.\\
+    ⍝ `msg`
+    ⍝ : Is empty in case `rc ←→ 0` but might offer addtional information otherwise.
+    ⍝ `ns`
+    ⍝ : Namespace with the data received from GitHub.
+      gitPath←'https://api.github.com/'
+      endpoints←⎕NS''
+      (rc msg endpoints)←GetJson gitPath
+      :If 0=rc
+          endpoints.⎕FX'r←List' 'r←{⍵,[1.5]⍎¨⍵}⎕NL-2'
+      :EndIf
+      :If 0≠≢endpoints
+          endpoints.⎕DF'[JSON Object: EndPoints]'
+      :EndIf
+    ∇
+
+    ∇ (rc msg)←PutTopics(repoName topics);gitPath;parms;dummy
+      :Access Public Instance
+    ⍝ ...
+      '"topics" must be a vector of character vectors'⎕SIGNAL 11/⍨2≠≡topics
+      gitPath←'https://api.github.com/repos/',(_owner),'/',repoName,'/topics'
+      parms←CreateParms
+      parms.Accepted←'application/vnd.github.mercy-preview+json'
+      parms.Method←'PUT'
+      parms.Body←'{',(1 ⎕JSON'names'topics),'}'
+      (rc msg dummy)←parms GetJson gitPath
     ∇
 
     ∇ number←CastTagname2Number text;vec;bool
@@ -128,19 +185,6 @@
       :EndIf
     ∇
 
-    ∇ (rc msg endpoints)←GetAllEndpoints;gitPath;msg;rc
-      :Access Public Shared
-    ⍝ This method returns all REST endpoints offered by the API.\\
-    ⍝ It returns a namespace. Use `endpoint`'s built-in `List` function for an overview.
-    ⍝ `endpoints` is empty in case of an error.
-      gitPath←'https://api.github.com/'
-      endpoints←⎕NS''
-      (rc msg endpoints)←GetJson gitPath
-      :If 0=rc
-          endpoints.⎕FX'r←List' 'r←{⍵,[1.5]⍎¨⍵}⎕NL-2'
-      :EndIf
-    ∇
-
 ⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝ Private stuff
 
       GetNoOfPages←{
@@ -175,15 +219,17 @@
       txt←ts.ReadToEnd
     ∇
 
-    ∇ (rc msg ns)←GetJson gitPath;cp;ServicePointManager;req;res;data;WebRequest;i;noOfPages;headers;owner
+    ∇ (rc msg ns)←{parms}GetJson gitPath;cp;ServicePointManager;req;res;data;WebRequest;i;noOfPages;headers;owner;parms;str
     ⍝ Takes a path which must specify a valid GitHub API URL and returns the data from GitHub.\\
     ⍝ `⍵`: Project URL, for example 'api.github.com/repos/aplteam/testrepo/releases/latest'
+    ⍝ `⍺`: Optional parameter space, typically create by calling `CreateParms`.
     ⍝ `rc`
     ⍝ : Either 0 for okay or an error code.\\
     ⍝ `msg`
     ⍝ : Is empty in case `rc←→0` but might offer addtional information otherwise.
     ⍝ `ns`
     ⍝ : Namespace with the data received from GitHub.
+      parms←{0<⎕NC ⍵:⍎⍵ ⋄ CreateParms}'parms'
       :If 0=⎕NC'_owner'
           owner←'APL GitHub API'
       :Else
@@ -199,7 +245,15 @@
           ServicePointManager.SecurityProtocol←SecurityProtocolType.Tls12
           req←WebRequest.CreateHttp⊂gitPath
           req.UserAgent←owner                   ⍝ MUST NOT be empty: required by the github api!
-          req.Accept←'Accept: application/vnd.github.v3+json'
+          req.Accept←parms.Accepted
+          req.Method←parms.Method
+     
+⍝          req.ContentLength←⍴parms.Body
+⍝          req.ContentType←'text/plain'
+⍝          str←req.GetRequestStream ⍬
+⍝          str.Write parms.Body (323 ⎕dr 0)(323 ⎕dr ≢parms.Body)
+⍝          str.Close
+     
           res←req.GetResponse
           ServicePointManager.SecurityProtocol←cp
           :If res.StatusCode≠res.StatusCode.OK
@@ -226,6 +280,14 @@
           rc←90
           msg←{⍵↓⍨1+⍵⍳':'}{⍵↑⍨1⍳⍨(⎕UCS 8 10)⍷⍵}⍕⎕EXCEPTION
       :EndTrap
+    ∇
+
+    ∇ r←CreateParms
+    ⍝ Create a parameter space that can be passed to some method that actually write to GitHub like `PutTopics'
+      r←⎕NS''
+      r.Accepted←'Accept: application/vnd.github.v3+json'
+      r.Method←'GET'
+      r.Body←''
     ∇
 
 :EndClass
