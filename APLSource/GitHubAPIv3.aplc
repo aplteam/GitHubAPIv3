@@ -26,6 +26,7 @@
     ⍝   * Versioning corrected.
     ⍝   * Documentation polished.
     ⍝   * :Include ##.APLTreeUtils fixed
+    ⍝   * Now compatible with 1.50
     ⍝ * 0.0.2
     ⍝   * Method `GetAllTopics` added.
     ⍝ * 0.0.1
