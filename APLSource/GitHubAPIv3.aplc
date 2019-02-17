@@ -1,27 +1,31 @@
 :Class GitHubAPIv3
-⍝ This clas offers methods that allows one to communicate with GitHub by using GitHub's REST API from Dyalog APL.
+⍝ This class offers methods that allows one to communicate with GitHub by using GitHub's REST API from Dyalog APL.
 ⍝ Note that this is version 3 of the GitHub API; the coming version 4 is **_not_** a REST interface!\\
 ⍝ Most methods of this class become available only by instanciating the class. At the moment this might seem
 ⍝ unnecessary because there is only one constructor requiring an owner's name, but this will change once OAuth
 ⍝ is going to be implemented.\\
 ⍝ The class came into being because APL Team needed such a class in order to deal with the members of the APLTree
 ⍝ and the APL-cation projects.\\
-⍝ Note that this class needs **at least Dyalog 16.0** (⎕JSON).\\
 ⍝ The project lives on <https://github.com/aplteam/GitHubAPIv3>\\
 ⍝ It is part of the [APLTree library](https://github.com/aplteam/apltree/wiki)
 ⍝ Kai Jaeger ⋄ APL Team Ltd
 
-    :Include ##.APLTreeUtils
+    :Include APLTreeUtils
 
     ⎕IO←1 ⋄ ⎕ML←1
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHub' '0.0.2.8' '2018-12-31'
+      r←'GitHub' '0.3.0.8' '2019-02-17'
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 0.3.0
+    ⍝   * Oktokit support added.
+    ⍝   * Versioning corrected.
+    ⍝   * Documentation polished.
+    ⍝   * :Include ##.APLTreeUtils fixed
     ⍝ * 0.0.2
     ⍝   * Method `GetAllTopics` added.
     ⍝ * 0.0.1
@@ -51,7 +55,7 @@
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases/latest'
       (rc msg ns)←GetJson gitPath
       :If 0=rc
-          ns.⎕DF'[JSON object: Release (',repoName,'-',ns.tag_name,')]'
+          ns.⎕DF'[JSON object: ',repoName,'-',ns.tag_name,']'
       :EndIf
     ∇
 
@@ -66,7 +70,7 @@
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases/tags/',tagName
       (rc msg ns)←GetJson gitPath
       :If 0=rc
-          ns.⎕DF'[JSON object: Release (',repoName,'-',tagName,')]'
+          ns.⎕DF'[JSON object: ',repoName,'-',tagName,']'
       :EndIf
     ∇
 
@@ -82,7 +86,7 @@
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/tags'
       (rc msg ns)←GetJson gitPath
       :If 0≠≢ns
-          ns.{⎕DF'[JSON Object: Release (',name,')]'}⊂⍬
+          ns.{⎕DF'[JSON Object: ',⍵,' ',name,']'}⊂repoName
       :EndIf
     ∇
 
@@ -97,7 +101,7 @@
       parms.Accepted←'application/vnd.github.mercy-preview+json'
       (rc msg ns)←parms GetJson gitPath
       :If 0=rc
-          ns.⎕DF'[JSON object: Release (',repoName,': topics)]'
+          ns.⎕DF'[JSON object: ',repoName,':topics]'
       :EndIf
     ∇
 
@@ -107,7 +111,7 @@
       gitPath←'https://api.github.com/users/',(_owner),'/repos'
       (rc msg ns)←GetJson gitPath
       :If 0≠≢ns
-          ns.{⎕DF'[JSON Object: Repository (',name,')]'}⊂⍬
+          ns.{⎕DF'[JSON Object: ',name,']'}⊂⍬
       :EndIf
     ∇
 
@@ -141,7 +145,7 @@
       parms←CreateParms
       parms.Accepted←'application/vnd.github.mercy-preview+json'
       parms.Method←'PUT'
-      parms.Body←'{',(1 ⎕JSON'names'topics),'}'
+      parms.Body←'{',(1 JSON'names'topics),'}'
       (rc msg dummy)←parms GetJson gitPath
     ∇
 
@@ -151,7 +155,7 @@
     ⍝ The items are called major.minor.patch.built with "built" being optional.\\
     ⍝ In case that is impossible (because `text` does not fulfil the criteria) `⍬` is returned.\\
     ⍝ Assumptions:
-    ⍝ * `text` may or may not start with a non-digit. If there is one it will be removed.\\
+    ⍝ * `text` may or may not start with a non-digit. All leading non-digit characters are ignored.\\
     ⍝   Therefore both `1.2.3` and `v.1.2.3` are valid input.
     ⍝ * The remaining `text` must consist of nothing but digits and dots.
     ⍝ * The first two numbers ("major" and "minor") must not be bigger than 99.
@@ -159,28 +163,31 @@
     ⍝ * The optional last (forth) number must not be bigger than 99999.
     ⍝ * `text` must come either with three numbers (as in `1.2.3`) or with four number (as in `1.2.3.9999`).
     ⍝ However, even if all assumptions are fulfilled but the result is zero there is still a `⍬` returned.
-    ⍝ Note that leading zeros are mermitted. Therefor 1.2.3.001 is **_not_** a valid input.
+    ⍝ Note that leading zeros are not permitted. Therefore 1.2.3.001 is **_not_** a valid input.\\
     ⍝ Examples:
     ⍝ + 1.20.333 transforms into 120333
-    ⍝ + 12.12.123.12345 transforms into 1212123.12345
+    ⍝ + 12.12.123.12345 transforms into 1212123.12345\\
     ⍝ If the tag name does not fulfil the assumptions the conversion might crash. In that case `⍬` is
     ⍝ returned as result.
       number←⍬
-      (bool vec)←'.'⎕VFI{⍵↓⍨~⎕D∊⍨⊃⍵}text
-      :If 3 4∊⍨⍴bool
-          vec←{⍵↑⍨3⌈4⌊⍴⍵}↑vec
-          :If 3=⍴vec
-              :If ∧/100 100 1000>vec
-              :AndIf 0=number←100 100 1000⊥vec
-                  number←⍬
+      text←{⍵↓⍨+/∧\0=⍵∊⎕D}text
+      :If 0=+/{+/∧\'0'=⍵}¨'.'Split text
+          (bool vec)←'.'⎕VFI text
+          :If 3 4∊⍨⍴bool
+              vec←{⍵↑⍨3⌈4⌊⍴⍵}↑vec
+              :If 3=⍴vec
+                  :If ∧/100 100 1000>vec
+                  :AndIf 0=number←100 100 1000⊥vec
+                      number←⍬
+                  :EndIf
+              :Else
+                  :If ~∧/100 100 1000 100000>vec
+                      number←⍬
+                  :ElseIf 0=number←100 100 1000 100000⊥vec
+                      number←⍬
+                  :EndIf
+                  number÷←100000
               :EndIf
-          :Else
-              :If ~∧/100 100 1000 100000>vec
-                  number←⍬
-              :ElseIf 0=number←100 100 1000 100000⊥vec
-                  number←⍬
-              :EndIf
-              number÷←100000
           :EndIf
       :EndIf
     ∇
@@ -261,7 +268,7 @@
               msg←'HTTP error'
               :Return
           :EndIf
-          ns←⎕JSON GetText res.GetResponseStream
+          ns←JSON GetText res.GetResponseStream
           headers←SplitHeaders⍕res.Headers
           :If 0<noOfPages←GetNoOfPages headers
               :For i :In 1↓⍳noOfPages
@@ -273,7 +280,7 @@
                       msg←'HTTP error'
                       :Return
                   :EndIf
-                  ns,←⎕JSON GetText res.GetResponseStream
+                  ns,←JSON GetText res.GetResponseStream
               :EndFor
           :EndIf
       :Else
@@ -288,6 +295,30 @@
       r.Accepted←'Accept: application/vnd.github.v3+json'
       r.Method←'GET'
       r.Body←''
+    ∇
+
+    ∇ r←{type}JSON y;version;buff
+    ⍝ Cover for `⎕JSON` in order to support 15.0 which had only an ⌶ for what became later `⎕JSON`.\\
+    ⍝ Note that by default this function imports JSON (`type`=0).\\
+    ⍝ In order to export `type` must be specified as 1.\\
+    ⍝ `y` must be a nested vector representing JSON in case `type` is 0 (the default).
+    ⍝ Otherwise `y` must be an APL array (including a namespace) that will be exported to JSON.
+      type←{0<⎕NC ⍵:⍎⍵ ⋄ 0}'type'
+      version←⊃(//)⎕VFI{⍵/⍨2>+\⍵='.'}2⊃'#'⎕WG'APLVersion'
+      'This version of Dyalog is not supported'⎕SIGNAL 11/⍨15>version
+      'Invalid left argument: must be Boolean'⎕SIGNAL 11/⍨~(⊂type)∊0 1
+      :If 15=version
+          :If 0=type        ⍝ Import?
+              r←7159⌶y
+          :ElseIf 1=type    ⍝ Export!
+              ∘∘∘ ⍝ Not implemented eyt (because not required)
+              7160⌶
+          :Else
+              ∘∘∘           ⍝ Huuh?!
+          :EndIf
+      :Else
+          r←⍎'type ⎕JSON filename'
+      :EndIf
     ∇
 
 :EndClass
