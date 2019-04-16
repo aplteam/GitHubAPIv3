@@ -16,17 +16,17 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHub' '0.3.0.8' '2019-02-17'
+      r←'GitHub' '0.3.0.11' '2019-04-16'
     ∇
 
     ∇ History
       :Access Public Shared
     ⍝ * 0.3.0
-    ⍝   * Oktokit support added.
     ⍝   * Versioning corrected.
     ⍝   * Documentation polished.
     ⍝   * :Include ##.APLTreeUtils fixed
-    ⍝   * Now compatible with 1.50
+    ⍝   * Bug fixes
+    ⍝     * `CastTagname2Number` did not accept something like `1.0.2`
     ⍝ * 0.0.2
     ⍝   * Method `GetAllTopics` added.
     ⍝ * 0.0.1
@@ -158,6 +158,8 @@
     ⍝ Assumptions:
     ⍝ * `text` may or may not start with a non-digit. All leading non-digit characters are ignored.\\
     ⍝   Therefore both `1.2.3` and `v.1.2.3` are valid input.
+    ⍝ * None is allowed to start with a zero followd by a non-zero digit. Therefore 1.0.0 is valid input but
+    ⍝   01.02.3, 1.02.3 and 1.2.03 are not.
     ⍝ * The remaining `text` must consist of nothing but digits and dots.
     ⍝ * The first two numbers ("major" and "minor") must not be bigger than 99.
     ⍝ * The third number ("path") must not be bigger than 999.
@@ -171,24 +173,23 @@
     ⍝ If the tag name does not fulfil the assumptions the conversion might crash. In that case `⍬` is
     ⍝ returned as result.
       number←⍬
-      text←{⍵↓⍨+/∧\0=⍵∊⎕D}text
-      :If 0=+/{+/∧\'0'=⍵}¨'.'Split text
+      :If 0<≢text←{⍵↓⍨+/∧\0=⍵∊⎕D}text
+      :AndIf 0=+/{(1<⊃≢⍵)∧⊃'0'=1↑⍵}¨'.'Split text
           (bool vec)←'.'⎕VFI text
-          :If 3 4∊⍨⍴bool
-              vec←{⍵↑⍨3⌈4⌊⍴⍵}↑vec
-              :If 3=⍴vec
-                  :If ∧/100 100 1000>vec
-                  :AndIf 0=number←100 100 1000⊥vec
-                      number←⍬
-                  :EndIf
-              :Else
-                  :If ~∧/100 100 1000 100000>vec
-                      number←⍬
-                  :ElseIf 0=number←100 100 1000 100000⊥vec
-                      number←⍬
-                  :EndIf
-                  number÷←100000
+      :AndIf 3 4∊⍨⍴bool
+          vec←{⍵↑⍨3⌈4⌊⍴⍵}↑vec
+          :If 3=⍴vec
+              :If ∧/100 100 1000>vec
+              :AndIf 0=number←100 100 1000⊥vec
+                  number←⍬
               :EndIf
+          :Else
+              :If ~∧/100 100 1000 100000>vec
+                  number←⍬
+              :ElseIf 0=number←100 100 1000 100000⊥vec
+                  number←⍬
+              :EndIf
+              number÷←100000
           :EndIf
       :EndIf
     ∇
@@ -318,7 +319,7 @@
               ∘∘∘           ⍝ Huuh?!
           :EndIf
       :Else
-          r←⍎'type ⎕JSON filename'
+          r←⍎'type ⎕JSON y'
       :EndIf
     ∇
 
