@@ -1,0 +1,11 @@
+ R←Test_021(stopFlag batchFlag);⎕TRAP
+⍝ Exercise the `CheckForUpdate` method.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+
+ →PassesIf 0=∆MyGitHubAPI.CheckForUpdate'TestRepo' '3.0.0'
+ →PassesIf 0=∆MyGitHubAPI.CheckForUpdate'TestRepo' '2.0.0'
+ →PassesIf 1=∆MyGitHubAPI.CheckForUpdate'TestRepo' '1.9.0'   ⍝ The latest is 2.0.0
+
+ R←∆OK
+⍝Done

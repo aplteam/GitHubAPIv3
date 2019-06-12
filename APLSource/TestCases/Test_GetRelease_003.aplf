@@ -1,0 +1,14 @@
+ R←Test_GetRelease_003(stopFlag batchFlag);⎕TRAP;dmx;url
+⍝ Exercise the `GetRelease` method.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+
+ url←∆MyGitHubAPI.GetRelease'APLTreeUtils' 'EXE'              ⍝ Becauss this test project has no EXE!
+ →PassesIf 0=≢url
+ url←∆MyGitHubAPI.GetRelease'TestRepo' 'EXE'                  ⍝ This one has an EXE!
+ →PassesIf'https://'{⍺≡(≢⍺)↑⍵}url
+ url←'v1.0.1'∆MyGitHubAPI.GetRelease'TestRepo' 'EXE'          ⍝ Specific release
+ →PassesIf'https://'{⍺≡(≢⍺)↑⍵}url
+
+ R←∆OK
+⍝Done

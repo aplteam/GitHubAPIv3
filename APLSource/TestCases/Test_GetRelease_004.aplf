@@ -1,0 +1,15 @@
+ R←Test_GetRelease_004(stopFlag batchFlag);⎕TRAP;dmx;url
+⍝ Exercise the `GetRelease` method.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+
+ :Trap 11
+     {}∆MyGitHubAPI.GetRelease'TestRepo' 'Invalid'
+     →FailsIf 1
+ :Else
+     dmx←⎕DMX
+     →PassesIf'Invalid right argument ("type")'≡1⊃dmx.DM
+ :EndTrap
+
+ R←∆OK
+⍝Done

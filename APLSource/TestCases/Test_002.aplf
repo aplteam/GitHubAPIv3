@@ -1,8 +1,8 @@
  R←Test_002(stopFlag batchFlag);⎕TRAP;data;more;rc
-⍝ Get information regarding the latest release with the dedicated method `GetLatestRelease`
+⍝ Get information regarding the latest release with the dedicated method `GetLatestReleaseInfo`
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←∆Failed
- (rc more data)←∆MyGitHubAPI.GetLatestRelease'TestRepo'
+ (rc more data)←∆MyGitHubAPI.GetLatestReleaseInfo'TestRepo'
  →PassesIf 0=rc
  →PassesIf 0=≢more
  →PassesIf'aplteam'≡data.author.login

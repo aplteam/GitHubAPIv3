@@ -1,0 +1,11 @@
+ R←Test_GetRelease_001(stopFlag batchFlag);⎕TRAP;dmx;url
+⍝ Exercise the `GetRelease` method.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+
+ url←∆MyGitHubAPI.GetRelease'TestRepo' 'ZIP'
+ →PassesIf'https://'{⍺≡(≢⍺)↑⍵}url
+ →PassesIf∨/'/zipball/'⍷url
+
+ R←∆OK
+⍝Done

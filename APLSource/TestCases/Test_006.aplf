@@ -22,8 +22,10 @@
  →PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'v1.2.3.9999'
  →PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'abc1.2.3.9999'
 
+ →PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1.0'
+ →PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1'
+
  →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'va2b3n4n5'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'99.1'
  →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'99.1.2.3.4'
  →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'v...'
  →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'100.2.3'

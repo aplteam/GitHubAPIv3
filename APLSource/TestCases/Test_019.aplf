@@ -1,0 +1,11 @@
+ R←Test_019(stopFlag batchFlag);⎕TRAP;tag
+⍝ Exercise the `GetLatestTag` method.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←∆Failed
+
+ tag←∆MyGitHubAPI.GetLatestTag'TestRepo'
+ →PassesIf 0<≢tag
+ →PassesIf'v'=1⍴tag
+
+ R←∆OK
+⍝Done

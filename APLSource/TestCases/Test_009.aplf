@@ -3,7 +3,7 @@
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←∆Failed
 
- (rc more data)←∆MyGitHubAPI.GetReleaseByTagName'TestRepo' 'v1.0.0'
+ (rc more data)←∆MyGitHubAPI.GetReleaseInfoByTagName'TestRepo' 'v1.0.0'
  →PassesIf 0=rc
  →PassesIf 0=≢more
  →PassesIf data.tag_name≡'v1.0.0'
