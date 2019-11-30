@@ -1,17 +1,17 @@
  R←Test_018(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Exercise the `GetAllTopics` method.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
- R←∆Failed
+ R←T._Failed
 
  (rc more data)←∆MyGitHubAPI.GetAllTopics'TestRepo'
- →PassesIf 0=rc
- →PassesIf 0=≢more
- →PassesIf 0<≢data.names
+ →T.PassesIf 0=rc
+ →T.PassesIf 0=≢more
+ →T.PassesIf 0<≢data.names
 
  :If 0
      (rc more)←∆MyGitHubAPI.PutTopics'TestRepo'('test1' 'test2')
      ∘∘∘
  :EndIf
 
- R←∆OK
+ R←T._OK
 ⍝Done

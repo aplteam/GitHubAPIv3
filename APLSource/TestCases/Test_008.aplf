@@ -1,13 +1,13 @@
  R←Test_008(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Get a list with all endpoints offered by the API with `GetAllEndpoints`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
- R←∆Failed
+ R←T._Failed
 
  (rc more data)←∆MyGitHubAPI.GetAllEndpoints
- →PassesIf 0=rc
- →PassesIf 0=≢more
- →PassesIf 2=⍴⍴data.List
- →PassesIf 1<≡data.List
+ →T.PassesIf 0=rc
+ →T.PassesIf 0=≢more
+ →T.PassesIf 2=⍴⍴data.List
+ →T.PassesIf 1<≡data.List
 
- R←∆OK
+ R←T._OK
 ⍝Done

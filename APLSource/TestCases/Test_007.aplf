@@ -1,12 +1,12 @@
  R←Test_007(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Get list of releases with the dedicated method `GetAllReleases`
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
- R←∆Failed
+ R←T._Failed
 
  (rc more data)←∆MyGitHubAPI.GetAllReleases'TestRepo'
- →PassesIf 0=rc
- →PassesIf 0=≢more
- →PassesIf(≢data.name)∊3 4  ⍝ Only users with "Push" rights will see the draft release!
+ →T.PassesIf 0=rc
+ →T.PassesIf 0=≢more
+ →T.PassesIf(≢data.name)∊3 4  ⍝ Only users with "Push" rights will see the draft release!
 
- R←∆OK
+ R←T._OK
 ⍝Done

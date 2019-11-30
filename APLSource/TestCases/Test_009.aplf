@@ -1,12 +1,12 @@
  R←Test_009(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Get a specific release with `GetRelease`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
- R←∆Failed
+ R←T._Failed
 
  (rc more data)←∆MyGitHubAPI.GetReleaseInfoByTagName'TestRepo' 'v1.0.0'
- →PassesIf 0=rc
- →PassesIf 0=≢more
- →PassesIf data.tag_name≡'v1.0.0'
+ →T.PassesIf 0=rc
+ →T.PassesIf 0=≢more
+ →T.PassesIf data.tag_name≡'v1.0.0'
 
- R←∆OK
+ R←T._OK
 ⍝Done

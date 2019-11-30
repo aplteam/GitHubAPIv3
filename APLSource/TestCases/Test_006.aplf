@@ -1,41 +1,41 @@
  R←Test_006(stopFlag batchFlag);⎕TRAP;more;rc;version;tag
 ⍝ Convert text (for example a tagname) to a number with `CastTagname2Number`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
- R←∆Failed
+ R←T._Failed
 
- →PassesIf 102003=##.GitHubAPIv3.CastTagname2Number'1.2.3'
- →PassesIf 1002003=##.GitHubAPIv3.CastTagname2Number'10.2.3'
- →PassesIf 1020003=##.GitHubAPIv3.CastTagname2Number'10.20.3'
- →PassesIf 1020030=##.GitHubAPIv3.CastTagname2Number'10.20.30'
- →PassesIf 102003.00001=##.GitHubAPIv3.CastTagname2Number'1.2.3.1'
- →PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'1.2.3.9999'
+ →T.PassesIf 102003=##.GitHubAPIv3.CastTagname2Number'1.2.3'
+ →T.PassesIf 1002003=##.GitHubAPIv3.CastTagname2Number'10.2.3'
+ →T.PassesIf 1020003=##.GitHubAPIv3.CastTagname2Number'10.20.3'
+ →T.PassesIf 1020030=##.GitHubAPIv3.CastTagname2Number'10.20.30'
+ →T.PassesIf 102003.00001=##.GitHubAPIv3.CastTagname2Number'1.2.3.1'
+ →T.PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'1.2.3.9999'
 
- →PassesIf 1000=##.GitHubAPIv3.CastTagname2Number'v0.1.0'
- →PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1.0.0'
- →PassesIf 100000≡##.GitHubAPIv3.CastTagname2Number'1.0.0'
- →PassesIf 100000≡##.GitHubAPIv3.CastTagname2Number'1.0.0.0'
- →PassesIf 102000=##.GitHubAPIv3.CastTagname2Number'v1.2.0'
- →PassesIf 1002003=##.GitHubAPIv3.CastTagname2Number'v10.2.3'
- →PassesIf 1020003=##.GitHubAPIv3.CastTagname2Number'v10.20.3'
- →PassesIf 1020030=##.GitHubAPIv3.CastTagname2Number'v10.20.30'
- →PassesIf 102003.00001=##.GitHubAPIv3.CastTagname2Number'v1.2.3.1'
- →PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'v1.2.3.9999'
- →PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'abc1.2.3.9999'
+ →T.PassesIf 1000=##.GitHubAPIv3.CastTagname2Number'v0.1.0'
+ →T.PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1.0.0'
+ →T.PassesIf 100000≡##.GitHubAPIv3.CastTagname2Number'1.0.0'
+ →T.PassesIf 100000≡##.GitHubAPIv3.CastTagname2Number'1.0.0.0'
+ →T.PassesIf 102000=##.GitHubAPIv3.CastTagname2Number'v1.2.0'
+ →T.PassesIf 1002003=##.GitHubAPIv3.CastTagname2Number'v10.2.3'
+ →T.PassesIf 1020003=##.GitHubAPIv3.CastTagname2Number'v10.20.3'
+ →T.PassesIf 1020030=##.GitHubAPIv3.CastTagname2Number'v10.20.30'
+ →T.PassesIf 102003.00001=##.GitHubAPIv3.CastTagname2Number'v1.2.3.1'
+ →T.PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'v1.2.3.9999'
+ →T.PassesIf 102003.09999=##.GitHubAPIv3.CastTagname2Number'abc1.2.3.9999'
 
- →PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1.0'
- →PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1'
+ →T.PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1.0'
+ →T.PassesIf 100000=##.GitHubAPIv3.CastTagname2Number'v1'
 
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'va2b3n4n5'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'99.1.2.3.4'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'v...'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'100.2.3'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.200.3'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3000'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3.123456'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'01.2.3.4'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.02.3.4'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.03.4'
- →PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3.04'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'va2b3n4n5'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'99.1.2.3.4'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'v...'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'100.2.3'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.200.3'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3000'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3.123456'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'01.2.3.4'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.02.3.4'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.03.4'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3.04'
 
- R←∆OK
+ R←T._OK
 ⍝Done
