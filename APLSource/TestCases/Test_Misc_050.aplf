@@ -1,4 +1,4 @@
- R←Test_021(stopFlag batchFlag);⎕TRAP
+ R←Test_Misc_050(stopFlag batchFlag);⎕TRAP
 ⍝ Exercise the `CheckForUpdate` method.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed

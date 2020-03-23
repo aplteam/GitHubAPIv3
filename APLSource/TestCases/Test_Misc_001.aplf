@@ -1,4 +1,4 @@
- R←Test_004(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_Misc_001(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Get a list with all public repositories owned by "aplteam" with `GetAllRepos`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed

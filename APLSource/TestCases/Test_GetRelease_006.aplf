@@ -1,4 +1,4 @@
- R←Test_007(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_GetRelease_006(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Get list of releases with the dedicated method `GetAllReleases`
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed

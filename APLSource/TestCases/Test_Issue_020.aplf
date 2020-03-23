@@ -1,0 +1,14 @@
+ R←Test_Issue_020(stopFlag batchFlag);⎕TRAP;data;more;rc
+⍝ Get a single issue of a given repository for the current owner with `GetIssue`.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ (rc more data)←∆MyGitHubAPI.GetIssue'TestRepo' 2
+ →T.PassesIf 0=rc
+ →T.PassesIf 0=≢more
+ →T.PassesIf 2=⍴⍴data.∆List
+ →T.PassesIf 2=⍴⍴data.∆Details ∆MyGitHubAPI
+ →T.PassesIf 6 2≡⍴data.∆QuickView ∆MyGitHubAPI
+
+ R←T._OK
+⍝Done

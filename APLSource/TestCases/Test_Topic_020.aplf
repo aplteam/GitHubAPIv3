@@ -1,0 +1,26 @@
+ R←Test_Topic_020(stopFlag batchFlag);⎕TRAP;topics;more;rc;noOf
+⍝ Replace all topics for a given repository "TestRepo"
+⍝ Adds two topcis to what alreadu there and then restores the old setting.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ :If 1
+     R←T._Inactive
+     :Return
+ :EndIf
+
+ (rc more topics)←∆MyGitHubAPI.GetAllTopics'TestRepo'
+ Assert 0=rc
+ noOf←≢topics
+ topics,←'foo' 'goo'
+ (rc more topics)←∆MyGitHubAPI.ReplaceTopics'TestRepo'topics
+ Assert 0=rc
+ (rc more topics)←∆MyGitHubAPI.GetAllTopics'TestRepo'
+ Assert 0=rc
+ →T.PassesIf(noOf+2)=≢topics
+ topics~←'foo' 'goo'
+ (rc more topics)←∆MyGitHubAPI.ReplaceTopics'TestRepo'topics
+ Assert 0=rc
+
+ R←T._OK
+⍝Done

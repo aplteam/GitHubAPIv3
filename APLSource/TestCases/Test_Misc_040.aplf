@@ -1,4 +1,4 @@
- R←Test_019(stopFlag batchFlag);⎕TRAP;tag
+ R←Test_Misc_040(stopFlag batchFlag);⎕TRAP;tag
 ⍝ Exercise the `GetLatestTag` method.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed

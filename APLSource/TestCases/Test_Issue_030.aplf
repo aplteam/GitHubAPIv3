@@ -1,0 +1,25 @@
+ R←Test_Issue_030(stopFlag batchFlag);⎕TRAP;data;more;rc;parms
+⍝ Add an issue; exercises `CreateIssueParms` and `CreateIssue`
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+
+ :If 1
+     R←T._Inactive      ⍝ Not implemented yet
+     :Return
+ :EndIf
+
+ R←T._Failed
+
+ parms←∆MyGitHubAPI.CreateIssueParms
+ parms.title←⊃⎕SI
+ parms.assignees←⊂'aplteam'
+ parms.labels←'duplicate' 'invalid' 'Foo'
+ (rc more data)←∆MyGitHubAPI.CreateIssue'TestRepo'parms
+ ⎕SE.APLGit.Commit''
+ →T.PassesIf 0=rc
+ →T.PassesIf 0=≢more
+ →T.PassesIf 2=⍴⍴data.∆List
+ →T.PassesIf 2=⍴⍴data.∆Details ∆MyGitHubAPI
+ →T.PassesIf 6 2≡⍴data.∆QuickView ∆MyGitHubAPI
+
+ R←T._OK
+⍝Done

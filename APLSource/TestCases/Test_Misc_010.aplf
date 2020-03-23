@@ -1,4 +1,4 @@
- R←Test_006(stopFlag batchFlag);⎕TRAP;more;rc;version;tag
+ R←Test_Misc_010(stopFlag batchFlag);⎕TRAP;more;rc;version;tag
 ⍝ Convert text (for example a tagname) to a number with `CastTagname2Number`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed

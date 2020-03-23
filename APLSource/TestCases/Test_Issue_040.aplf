@@ -1,0 +1,15 @@
+ R←Test_Issue_040(stopFlag batchFlag);⎕TRAP;data;more;rc;parms
+⍝ Update an issue; exercises `UpdateIssue`
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+
+ :If 1
+     R←T._Inactive      ⍝ Not implemented yet
+     :Return
+ :EndIf
+
+ R←T._Failed
+
+ ∘∘∘ ⍝TODO⍝
+
+ R←T._OK
+⍝Done

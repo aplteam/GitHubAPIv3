@@ -1,4 +1,4 @@
- R←Test_008(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_Misc_020(stopFlag batchFlag);⎕TRAP;data;more;rc
 ⍝ Get a list with all endpoints offered by the API with `GetAllEndpoints`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
