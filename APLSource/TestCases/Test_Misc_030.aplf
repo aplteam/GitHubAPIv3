@@ -5,7 +5,7 @@
 
  (rc more data)←∆MyGitHubAPI.GetAllTopics'TestRepo'
  →T.PassesIf 0=rc
- →T.PassesIf 0=≢more
+ →T.PassesIf 0=≢more   ⍝ You will possibly get a 403 if the test cases are executed too often (GitHub does allow only so many requests without authentication)
  →T.PassesIf 0<≢data
 
  :If 0

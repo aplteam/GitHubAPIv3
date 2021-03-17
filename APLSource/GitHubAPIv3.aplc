@@ -12,17 +12,18 @@
 ⍝ It is part of the [APLTree library](https://github.com/aplteam/apltree/wiki)
 ⍝ Kai Jaeger ⋄ APL Team Ltd
 
-    :Include APLTreeUtils
-
     ⎕IO←1 ⋄ ⎕ML←1
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHub' '0.6.0.18' '2020-03-23'
+      r←'GitHub' '0.7.0+22' '2020-03-17'
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 0.7.0
+    ⍝   * Is a Tatin package now and therefore requires 18.0 Unicode or better
+    ⍝   * Does not :Include APLTreeUtils anymore (but does depend on APLTreeUtils2 being a sibling)
     ⍝ * 0.6.0
     ⍝   * File extension is now .aplc rather than .dyalog
     ⍝ * 0.5.0
@@ -79,6 +80,7 @@
       :Implements Constructor
       _owner←owner
       _regEx←'setup_<repoName>_<version>[.\]*.[0-9]{0,6}\.exe'  ⍝ After version there _might_ be a built number
+      A←(⊃⊃⎕CLASS ⎕THIS).##.APLTreeUtils2
     ∇
 
     ∇ (rc msg ns)←GetLatestReleaseInfo repoName;gitPath
@@ -213,7 +215,7 @@
       :EndIf
     ∇
 
-    ∇ (rc msg endpoints)←GetAllEndpoints;gitPath;msg;rc
+    ∇ (rc msg endpoints)←GetAllEndpoints;gitPath;msg;rc;A
       :Access Public Shared
     ⍝ This method returns all REST endpoints offered by the API.\\
     ⍝ It returns a namespace. Use the built-in `List` function for an overview.
@@ -224,6 +226,7 @@
     ⍝ : Is empty in case `rc ←→ 0` but might offer addtional information otherwise.
     ⍝ `ns`
     ⍝ : Namespace with the data received from GitHub.
+      A←##.APLTreeUtils2
       gitPath←'https://api.github.com/'
       endpoints←⎕NS''
       (rc msg endpoints)←GetJson gitPath
@@ -269,9 +272,14 @@
     ⍝ + 1.20.333 transforms into 120333
     ⍝ + 12.12.123.12345 transforms into 1212123.12345\\
       number←⍬
+      ⍝ This function might be called from a Shared method. when we need to address APLTreeUtils2 explicitly,
+      ⍝ or from a n Instance method, when `A` is a ref pointing to APLTreeUtils2.
+      :If 0<##.⎕NC'APLTreeUtils2'
+          A←##.APLTreeUtils2
+      :EndIf
       :If 0<≢text←{⍵↓⍨+/∧\0=⍵∊⎕D}text
           text,←⊃,/(0⌈2-text+.='.')⍴⊂'.0'
-      :AndIf 0=+/{(1<⊃≢⍵)∧⊃'0'=1↑⍵}¨'.'Split text
+      :AndIf 0=+/{(1<⊃≢⍵)∧⊃'0'=1↑⍵}¨'.'A.Split text
           (bool vec)←'.'⎕VFI text
       :AndIf 3 4∊⍨⍴bool
           vec←{⍵↑⍨3⌈4⌊⍴⍵}↑vec
@@ -307,7 +315,7 @@
       :If 0=⎕NC'regEx'
           regEx←_regEx
       :EndIf
-      type←Uppercase type
+      type←1 ⎕C type
       'Invalid right argument ("type")'⎕SIGNAL 11/⍨~(⊂type)∊'EXE' 'ZIP' 'TAR'
       :If 0=⎕NC'tag'
           (rc more info)←GetLatestReleaseInfo repoName
@@ -331,7 +339,7 @@
               regEx←'/',_owner,'/',repoName,'/releases/download/v',tag,'/',regEx
               :If 1=≢buff←regEx ⎕S 2 0 1⍠('Greedy' 0)('IC' 1)⊣html
                   (itemNo offset length)←⊃buff
-                  url←'https://github.com/',1↓(1+length)↑(offset-1)↓(itemNo+1)⊃(⎕UCS 10)Split html
+                  url←'https://github.com/',1↓(1+length)↑(offset-1)↓(itemNo+1)⊃(⎕UCS 10)A.Split html
               :EndIf
           :EndIf
       :EndIf
@@ -342,8 +350,13 @@
     ⍝ Note that drafted release and pre-release are both ignored.
       :Access Public Instance
       (rc more ns)←GetLatestReleaseInfo repoName
-      :If ∨/'Error'⍷∊more
-          'Error accessin GitHub via the REST API'⎕SIGNAL 11
+      :If 0≠rc
+      :OrIf ∨/'Error'⍷∊more
+          :If 0=≢more
+              'Error accessing GitHub via the REST API'⎕SIGNAL 11
+          :Else
+              more ⎕SIGNAL 11
+          :EndIf
       :Else
           tag←ns.tag_name
       :EndIf
@@ -418,10 +431,10 @@
       GetNoOfPages←{
    ⍝ Takes HTTP headers and returns the number of pages. If there are not any a zero is returned.
           headers←⍵
-          bool←'Link:'{⍺∘≡¨(⍴⍺)↑¨⍵}headers
+          bool←'link:'{⍺∘≡¨(⍴⍺)↑¨⍵}⎕C headers
           0=+/bool:0
           link←(bool⍳1)⊃headers
-          buff←' 'Split link
+          buff←' 'A.Split link
           last←(¯1+⍴buff)⊃buff
           buff←{⍵{(⍴'?page-')↓⍵[2]↑⍵[1]↓⍺}⊃'(&|\?)page=[0-9]{1,}'⎕S 0 1⊣⍵}last
           ⊃⊃(//)⎕VFI buff
@@ -430,16 +443,16 @@
       GetLinkToNextPage←{
    ⍝ Takes HTTP headers and returns the link pointing to the next page, if any
           headers←⍵
-          bool←'Link:'{⍺∘≡¨(⍴⍺)↑¨⍵}headers
+          bool←'link:'{⍺∘≡¨(⍴⍺)↑¨⍵}⎕C headers
           0=+/bool:0
           link←(bool⍳1)⊃headers
-          buff←' 'Split link
+          buff←' 'A.Split link
           1↓¯2↓⊃1↓buff
       }
 
       SplitHeaders←{
           headers←⍵↑⍨1⍳⍨(⎕UCS 10 13)⍷⍵
-          (⎕UCS 13 10)Split headers
+          A.Split headers
       }
 
     ∇ txt←GetText obj;ts
@@ -451,19 +464,16 @@
     ⍝ Takes `gitURL`which must specify a valid GitHub API URL and returns the data from GitHub.\\
     ⍝ `⍵`: Project URL, for example 'api.github.com/repos/aplteam/testrepo/releases/latest'
     ⍝ `⍺`: Optional parameter space, typically create by calling `CreateHttpParms`.
-    ⍝ `rc`
-    ⍝ : Either 0 for okay or an error code.\\
-    ⍝ `msg`
-    ⍝ : Is empty in case `rc←→0` but might offer addtional information otherwise.
-    ⍝ `ns`
-    ⍝ : Namespace with the data received from GitHub.
+    ⍝ | `rc`  | Either 0 for okay or an error code.
+    ⍝ | `msg` | Is empty in case `rc←→0` but might offer addtional information otherwise.
+    ⍝ | `ns`  | Namespace with the data received from GitHub.
       parms←{0<⎕NC ⍵:⍎⍵ ⋄ CreateHttpParms}'parms'
       :If 0=⎕NC'_owner'
           owner←'APL GitHub API'
       :Else
           owner←_owner
       :EndIf
-      gitURL←'https://'{⍵,⍨⍺/⍨⍺≢(⍴⍺)↑⍵}Lowercase gitURL
+      gitURL←'https://'{⍵,⍨⍺/⍨⍺≢(⍴⍺)↑⍵}⎕C gitURL
       rc←0
       msg←''
       ns←⎕NS''
@@ -517,7 +527,7 @@
           :If 0=type        ⍝ Import?
               r←7159⌶y
           :ElseIf 1=type    ⍝ Export!
-              ∘∘∘ ⍝ Not implemented yet (because not required)
+              ∘∘∘           ⍝ Not implemented yet (because never required)
               7160⌶
           :Else
               ∘∘∘           ⍝ Huuh?!

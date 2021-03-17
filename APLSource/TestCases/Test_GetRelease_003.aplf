@@ -3,7 +3,7 @@
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
- url←∆MyGitHubAPI.GetRelease'APLTreeUtils' 'EXE'              ⍝ Becauss this test project has no EXE!
+ url←∆MyGitHubAPI.GetRelease'APLTreeUtils2' 'EXE'             ⍝ Becauss this test project has no EXE!
  →T.PassesIf 0=≢url
  url←∆MyGitHubAPI.GetRelease'TestRepo' 'EXE'                  ⍝ This one has an EXE!
  →T.PassesIf'https://'{⍺≡(≢⍺)↑⍵}url

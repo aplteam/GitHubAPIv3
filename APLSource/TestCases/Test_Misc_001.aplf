@@ -6,7 +6,7 @@
  (rc more data)←∆MyGitHubAPI.GetAllRepos
  →T.PassesIf 0=rc
  →T.PassesIf 0=≢more
- →T.PassesIf 30<≢data  ⍝ Important: GitHub pages requests to a max of 30 items per page,
+ →T.PassesIf 30<≢data  ⍝ Important: GitHub returns by default a maximum of 30 items per page; there are more repositories, and all should be delivered
 
  R←T._OK
 ⍝Done
