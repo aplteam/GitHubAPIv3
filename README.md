@@ -1,12 +1,10 @@
 # GitHubAPIv3
 
-## Dependencies
-
-Like most classes of the APLTree library GitHubAPIv3 depends on APLTreeUtils to be around. That namespace script is `:INCLUDE`d.
-
 ## Experimental
 
-As long as the version number of GitHubAPIv3 starts with a 0 it is experimental. However, you can be sure that the code is stable and test cases exist and pass though the design might still change.
+This project is not much more than an experiment. Currently I have no intention to put work into this since it appears that having GitBash installed is enough for an APL programmer.
+
+Of course things might change...
 
 ## Overview
 

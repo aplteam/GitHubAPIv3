@@ -1,7 +1,7 @@
 :Class GitHubAPIv3
 ⍝ This class offers methods that allows one to communicate with GitHub by using GitHub's REST API from Dyalog APL.
 ⍝ Note that this is version 3 of the GitHub API; the coming version 4 is **_not_** a REST interface!\\
-⍝ Most methods of this class become available only by instanciating the class. At the moment this might seem
+⍝ Most methods of this class become available only by instantiating the class. At the moment this might seem
 ⍝ unnecessary because there is only one constructor requiring an owner's name, but this will change once OAuth
 ⍝ is going to be implemented.\\
 ⍝ Apart from the REST interface the class also offers one method that relies on the REST interface but goes beyond
@@ -16,7 +16,7 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHub' '0.7.0+22' '2020-03-17'
+      r←'GitHub' '0.7.0+23' '2020-03-17'
     ∇
 
     ∇ History
