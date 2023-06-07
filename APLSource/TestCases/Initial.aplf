@@ -1,2 +1,5 @@
  Initial
  ∆MyGitHubAPI←⎕NEW ##.GitHubAPIv3(,⊂'aplteam')
+ :If FilesAndDirs.IsFile ##.TatinVars.HOME,'/personal_access_token.txt'
+     ∆MyGitHubAPI.personal_access_token←⎕TC~⍨⊃FilesAndDirs.NGET ##.TatinVars.HOME,'/personal_access_token.txt'
+ :EndIf

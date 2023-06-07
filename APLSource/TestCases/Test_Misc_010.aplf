@@ -36,6 +36,7 @@
  →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.02.3.4'
  →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.03.4'
  →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'1.2.3.04'
+ →T.PassesIf ⍬≡##.GitHubAPIv3.CastTagname2Number'0.0.0.0'
 
  R←T._OK
 ⍝Done

@@ -6,6 +6,7 @@
  tag←∆MyGitHubAPI.GetLatestTag'TestRepo'
  →T.PassesIf 0<≢tag
  →T.PassesIf'v'=1⍴tag
+ →T.PassesIf'v2.0.0'≡∊tag
 
  R←T._OK
 ⍝Done

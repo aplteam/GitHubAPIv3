@@ -1,0 +1,14 @@
+ R←Test_Misc_005(stopFlag batchFlag);⎕TRAP;version
+⍝ Exercise the `Version` method
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ version←##.GitHubAPIv3.Version
+ →T.PassesIf'GitHubAPIv3'≡1⊃version
+ →T.PassesIf 2='.'+.=2⊃version
+ →T.PassesIf'-'×.={⍵[5 8]}3⊃version
+ →T.PassesIf 2='-'+.=3⊃version
+ →T.PassesIf 8=≢'-'~⍨3⊃version
+
+ R←T._OK
+⍝Done

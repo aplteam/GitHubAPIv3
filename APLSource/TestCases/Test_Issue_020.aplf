@@ -3,9 +3,7 @@
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
- (rc more data)←∆MyGitHubAPI.GetIssue'TestRepo' 2
- →T.PassesIf 0=rc
- →T.PassesIf 0=≢more
+ data←∆MyGitHubAPI.GetIssue'TestRepo' 2
  →T.PassesIf 2=⍴⍴data.∆List
  →T.PassesIf 2=⍴⍴data.∆Details ∆MyGitHubAPI
  →T.PassesIf 6 2≡⍴data.∆QuickView ∆MyGitHubAPI

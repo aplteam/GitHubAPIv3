@@ -1,11 +1,9 @@
- R←Test_Misc_001(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_Misc_001(stopFlag batchFlag);⎕TRAP;data
 ⍝ Get a list with all public repositories owned by "aplteam" with `GetAllRepos`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
- (rc more data)←∆MyGitHubAPI.GetAllRepos
- →T.PassesIf 0=rc
- →T.PassesIf 0=≢more
+ data←∆MyGitHubAPI.GetAllRepos
  →T.PassesIf 30<≢data  ⍝ Important: GitHub returns by default a maximum of 30 items per page; there are more repositories, and all should be delivered
 
  R←T._OK

@@ -1,11 +1,9 @@
- R←Test_Topic_010(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_Topic_010(stopFlag batchFlag);⎕TRAP;data
 ⍝ Request a list of all topcis assigned to the "TestRep" repository
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
- (rc more data)←∆MyGitHubAPI.GetAllTopics'TestRepo'
- →T.PassesIf 0=rc
- →T.PassesIf 0=≢more
+ data←∆MyGitHubAPI.GetAllTopics'TestRepo'
  →T.PassesIf 2=≡data
  →T.PassesIf 0<≢data
 

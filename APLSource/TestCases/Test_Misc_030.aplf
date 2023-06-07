@@ -1,17 +1,11 @@
- R←Test_Misc_030(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_Misc_030(stopFlag batchFlag);⎕TRAP;data
 ⍝ Exercise the `GetAllTopics` method.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
- (rc more data)←∆MyGitHubAPI.GetAllTopics'TestRepo'
- →T.PassesIf 0=rc
- →T.PassesIf 0=≢more   ⍝ You will possibly get a 403 if the test cases are executed too often (GitHub does allow only so many requests without authentication)
+ data←∆MyGitHubAPI.GetAllTopics'TestRepo'
  →T.PassesIf 0<≢data
-
- :If 0
-     (rc more)←∆MyGitHubAPI.PutTopics'TestRepo'('test1' 'test2')
-     ∘∘∘
- :EndIf
+ →T.PassesIf'dyalog-apl' 'tests' 'apl'≡data
 
  R←T._OK
 ⍝Done

@@ -1,0 +1,15 @@
+ R←Test_GetRelease_008(stopFlag batchFlag);⎕TRAP;dmx;url
+⍝ Exercise the `GetRelease` method on non-existent repo
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ :Trap 11
+     {}∆MyGitHubAPI.GetRelease'DoesNotExist' 'ZIP'
+     →T.FailsIf 1
+ :Else
+     dmx←⎕DMX
+     →T.PassesIf'Not Found'≡dmx.EM
+ :EndTrap
+
+ R←T._OK
+⍝Done

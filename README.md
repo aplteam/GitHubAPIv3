@@ -1,51 +1,62 @@
 # GitHubAPIv3
 
-## Experimental
-
-This project is not much more than an experiment. Currently I have no intention to put work into this since it appears that having GitBash installed is enough for an APL programmer.
-
-Of course things might change...
-
 ## Overview
 
-This class offers methods useful to communicate with GitHub's API version 3 from Dyalog APL.
+GitHubAPIv3 provides methods for seamless communication with GitHub using its API version 3, which utilizes a RESTful interface.
 
-Note that version 3 is the last version of that API that uses REST. See `GitHubAPIGraphQL` for using a later version of the API.
+Please note that API version 3 is the last version to employ REST. To work with a later version of the API, refer to GitHubAPIGraphQL.
 
-So far this class comes with a selection of methods useful to collect information about repositories and releases. In particular these methods allow you to check whether a better version of a program is available, and to download it if you wish so.
+This class currently offers a selection of methods that are valuable for retrieving information about repositories and releases, among other things. Notably, these methods enable you to check for the availability of an updated version of a program, and download it if desired. Instantiating `GitHubAPIv3` is a prerequisite for utilizing these methods.
 
-Those methods require GitHubAPIv3 to be instanciated. That might seem like overkill because right now there is only one constructor requiring the owner's name, but with the implementation of OAuth that will change.
+There are also some shared method: 
 
-In addition there is one shared method: `CastTagname2Number`; it takes a tag name and returns a number from it by making certain assumptions. This is useful for version comparison.
+* `CastTagname2Number` takes a tag name and derives a corresponding number based on certain assumptions. This is useful for version comparisons ("greater than..")
+* `GetRateLimits` provides information about the limitations imposed by GitHub's API
 
-See `]adoc GitHubAPIv3` for details from within Dyalog.
+For detailed information from within Dyalog, refer to `]ADoc GitHubAPIv3`.
+
 
 ## Usage example
 
-The following code shows how to use the GitHubAPIv3 class:
+The following code demonstrates the usage of the `GitHubAPIv3` class:
 
 ```
 OnCheckForUpdates←{
      G←#.GitHubAPIv3
+    ⍝G.personal_access_token←'<MyAccessToken>'
+     version←'1.0.0'  ⍝ Current version used
      myGitAPI←⎕NEW G(,⊂'aplteam')
-     (rc more ns)←myGitAPI.GetLatestRelease'Meddy'
-     0≠rc:0⊣TellErrorWhileCheckingForBetterVersion more
-     gitVersion←G.CastTagname2Number ns.tag_name
+     data←myGitAPI.GetLatestReleaseInfo'Meddy'
+     gitVersion←G.CastTagname2Number data.tag_name
      gitVersion≤⌊G.CastTagname2Number 1⊃Version:0⊣TellIsUp2Date ⍬
-     msg←⊂'There is a better version available on GitHub: ',1↓ns.tag_name
+     msg←⊂'There is a better version available on GitHub: ',1↓data.tag_name
      msg,←'' 'Would you like to download the new version?'
-     0=#.Dialogs.YesOrNo msg:0
-     0⊣#.APLTreeUtils.GoToWebPage ns.zipball_url
+     0=#.CommTools.YesOrNo msg:0
+     0⊣#.APLTreeUtils2.GoToWebPage data.zipball_url
  }
 ```
+Note that there is also a CheckForUpdate method that takes a repository name and a version number (typically the currently installed/used version). It returns an empty vector if no better version is available, or the better version number.
+
+## Authentication and authorisation
+
+At present, authentication and authorization are not necessary since all methods are read-only.
+
+However, two potential scenarios may require attention to authentication and authorization:
+
+* Addition of methods in future versions that require write access (e.g., `CreateIssue` and similar operations)
+* Severe limitations on the number of requests per hour without authentication/authorization
+
+To address these scenarios, you must create a personal access token on the GitHub website and assign it to the instance property "personal_access_token".
+
 
 ## Versioning
 
-`CastTagname2Number` assumes something like `v1.2.3` or `v1.2.3.4`. 
+The `CastTagname2Number` method accepts input in the format `v1.2.3` or `v1.2.3.4`.
 
 Some examples:
 
 ```
+   1002       ←→ G.CastTagname2Number 'v0.1.2'
  102003       ←→ G.CastTagname2Number 'v1.2.3'
 1202003       ←→ G.CastTagname2Number 'v12.2.3'
  102003.00004 ←→ G.CastTagname2Number 'v1.2.3.4'
@@ -53,3 +64,24 @@ Some examples:
 ```
 
 Maxima are `99.99.999.99999`.
+
+## List of methods
+
+```
+CastTagname2Number      Shared 
+CheckForUpdate          Instance 
+GetAllEndpoints         Shared
+GetAllIssues            Instance 
+GetAllReleases          Instance 
+GetAllRepos             Instance 
+GetAllTopics            Instance 
+GetIssue                Instance 
+GetLatestReleaseInfo    Instance 
+GetLatestTag            Instance 
+GetPrinciple            Instance 
+GetRateLimits           Shared
+GetRelease              Instance 
+GetReleaseInfoByTagName Instance 
+History                 Shared 
+Version                 Shared
+```

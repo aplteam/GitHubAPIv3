@@ -1,0 +1,9 @@
+ R←Test_Misc_008(stopFlag batchFlag);⎕TRAP
+⍝ Exercise the `owner` property
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ →T.PassesIf 'aplteam'≡ ∆MyGitHubAPI.owner
+
+ R←T._OK
+⍝Done

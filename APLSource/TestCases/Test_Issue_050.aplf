@@ -1,0 +1,11 @@
+ R←Test_Issue_050(stopFlag batchFlag);⎕TRAP;data;data2
+⍝ Check whether `GetAllIssues also returns pull requests if asked to do so
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ data←∆MyGitHubAPI.GetAllIssues'TestRepo'
+ data2←1 ∆MyGitHubAPI.GetAllIssues'TestRepo'
+ →T.PassesIf(≢data2)=1+≢data  ⍝ There are two issues and one pull request
+
+ R←T._OK
+⍝Done

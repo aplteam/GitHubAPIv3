@@ -1,11 +1,9 @@
- R←Test_Issue_010(stopFlag batchFlag);⎕TRAP;data;more;rc
+ R←Test_Issue_010(stopFlag batchFlag);⎕TRAP;data
 ⍝ Get a list with all issues of a given repository of the current owner with `GetAllIssues`.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
- (rc more data)←∆MyGitHubAPI.GetAllIssues'TestRepo'
- →T.PassesIf 0=rc
- →T.PassesIf 0=≢more
+ data←∆MyGitHubAPI.GetAllIssues'TestRepo'
  →T.PassesIf 1=⍴⍴data.∆List
  →T.PassesIf∧/2∧.=¨⍴∘⍴¨data.∆List
  →T.PassesIf 1=⍴⍴data.∆Details ∆MyGitHubAPI
