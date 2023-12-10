@@ -10,31 +10,16 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHubAPIv3' '1.0.1' '2023-08-28'
+      r←'GitHubAPIv3' '1.1.0' '2023-12-10'
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 1.1.0
+    ⍝   Dependencies updated: HttpCommand and APLTreeUtil2
     ⍝ * 1.0.1
     ⍝   * Domain of the function `CastTagname2Number` extended: Major and minor nmber might both carry 3 digits,
     ⍝     while a build number might carry up to 5 digits.
-    ⍝ * 1.0.0
-    ⍝   * This release comes with several breaking changes due to a re-design:
-    ⍝     1. It does not depend on .NET anymore, meaning is works on Linux and Mac-OS without .NET
-    ⍝        Instead it now depends on the `HttpCommand` package.
-    ⍝     2. The functions return neither an error code nor an error message anymore, just the result;
-    ⍝        errors are signalled now
-    ⍝     3. `GetAllReleases` now returns by default a vector of character vectors with the versions.
-    ⍝        The newly introduced optional left argument `verbose` can be used to get the full data instead.
-    ⍝     4. The `CheckForUpdate` now returns a character vector rather than a Boolean, see there
-    ⍝     5. `GetAllEndpoints` now requires a Boolean right argument. If this is a 0 a two-column matrix is
-    ⍝        returned, though by passing a 1 as ⍺ ("verbose") one can still get the JSON objects as namespaces.
-    ⍝     6. The `regEx` property was removed because it is not required anymore
-    ⍝     7. `PutTopics` removed
-    ⍝   * There is now a property "personal_access_token" which when not empty is used to authenticate requests.
-    ⍝   * This version works cross-platform **without** depending on .NET.
-    ⍝   * Bug fixes
-    ⍝     * Package config was faulty (source). Functionality was not affected by this bug.
     ⍝\\
     ⍝ For information regarding older versions see <https://github.com/aplteam/GitHubAPIv3/releases>
     ∇
