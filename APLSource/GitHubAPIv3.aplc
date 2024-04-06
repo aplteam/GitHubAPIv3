@@ -1,6 +1,6 @@
 :Class GitHubAPIv3
 ⍝ This class offers methods that allows one to communicate with GitHub by using GitHub's REST API from Dyalog APL.
-⍝ Note that this is version 3 of the GitHub API; Later versions doe **not** use REST.\\
+⍝ Note that this is version 3 of the GitHub API; Later versions do **not** use REST.\\
 ⍝ Most methods of this class become available only by instantiating the class. `⎕NEW` requires an owner as argument.\\
 ⍝ However, there are also a few shared methods beyond `Version` and `History` available.\\
 ⍝ Kai Jaeger\\
@@ -10,11 +10,13 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHubAPIv3' '1.1.0' '2023-12-10'
+      r←'GitHubAPIv3' '1.2.0' '2024-03-19'
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 1.2.0
+    ⍝   * Dependencies updated
     ⍝ * 1.1.0
     ⍝   Dependencies updated: HttpCommand and APLTreeUtil2
     ⍝ * 1.0.1
@@ -128,8 +130,8 @@
     ∇ ns←{addPullRequests}GetAllIssues repoName;gitPath
       :Access Public Instance
     ⍝ Returns all issues for a given repository but no pull requests by default.\\
-    ⍝ In GitHub, every pull request is an issue, but now all issues are pull requests.
-    ⍝ This function does not show pull requests by default, by you can change this by passing a 1 as left argument.
+    ⍝ In GitHub, every pull request is an issue, but not all issues are pull requests.
+    ⍝ You can enforce Pull Requests by passing a 1 as left argument.
       addPullRequests←{0<⎕NC ⍵:⍎⍵ ⋄ 0}'addPullRequests'
       gitPath←'https://api.github.com/repos/',(_owner),'/',repoName,'/issues'
       ns←GetJson gitPath
