@@ -8,7 +8,7 @@
      →T.FailsIf 1
  :Else
      dmx←⎕DMX
-     →T.PassesIf'Not Found'≡dmx.EM
+     →T.PassesIf'Not Found (404)'≡dmx.EM
  :EndTrap
 
  R←T._OK
