@@ -35,15 +35,15 @@ OnCheckForUpdates←{
      0⊣#.APLTreeUtils2.GoToWebPage data.zipball_url
  }
 ```
-Note that there is also a CheckForUpdate method that takes a repository name and a version number (typically the currently installed/used version). It returns an empty vector if no better version is available, or the better version number.
+Note that there is also a `CheckForUpdate` method that takes a repository name and a version number (typically the currently installed/used version). It returns an empty vector if no better version is available, or the better version number.
 
 ## Authentication and authorisation
 
-At present, authentication and authorization are not necessary since all methods are read-only.
+At present, authentication and authorization are not required since all methods are read-only.
 
-However, two potential scenarios may require attention to authentication and authorization:
+However, two potential scenarios may require authentication and authorization anyway:
 
-* Addition of methods in future versions that require write access (e.g., `CreateIssue` and similar operations)
+* In the future methods might be added that require write access like `CreateIssue` etc.
 * Severe limitations on the number of requests per hour without authentication/authorization
 
 To address these scenarios, you must create a personal access token on the GitHub website and assign it to the instance property "personal_access_token".
@@ -69,7 +69,7 @@ Maxima are `99.99.999.99999`.
 
 ```
 CastTagname2Number      Shared 
-CheckForUpdate          Instance 
+CheckForUpdate          Instance
 GetAllEndpoints         Shared
 GetAllIssues            Instance 
 GetAllReleases          Instance 
@@ -78,7 +78,7 @@ GetAllTopics            Instance
 GetIssue                Instance 
 GetLatestReleaseInfo    Instance 
 GetLatestTag            Instance 
-GetPrinciple            Instance 
+GetPrincipal            Instance 
 GetRateLimits           Shared
 GetRelease              Instance 
 GetReleaseInfoByTagName Instance 
