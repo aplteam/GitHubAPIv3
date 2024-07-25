@@ -1,0 +1,10 @@
+ R←Test_Issue_055(stopFlag batchFlag);⎕TRAP;data
+⍝
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ data←∆MyGitHubAPI.GetAllIssues'TestRepo'
+ →T.PassesIf 2∧.=⊃∘⍴∘⍴¨data.∆List
+
+ R←T._OK
+⍝Done

@@ -19,5 +19,5 @@
   source: "APLSource/GitHubAPIv3.aplc",
   tags: "github-utilities",
   userCommandScript: "",
-  version: "1.2.0+37",
+  version: "1.2.1+40",
 }
