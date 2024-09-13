@@ -10,14 +10,18 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHubAPIv3' '1.2.1' '2024-07-25'
+      r←'GitHubAPIv3' '1.3.0-beta-2' '2024-09-13'
     ∇
 
     ∇ History
       :Access Public Shared
-    ⍝ * 1.2.1
+    ⍝ * 1.3.0 from 2024-09-13
+    ⍝   * There was no way to specify a path for the Conga DLLs in GetJson: now there is a field `path2CongaDLLs`
+    ⍝   * Bug Fixes
+    ⍝     The function `GetJson` had an optional left argument `parms` that was never processed: removed.
+    ⍝ * 1.2.1 from 2024-07-25
     ⍝   * Bug fixed
-    ⍝     `GetAllIssues` crashed when there were no issues to report 
+    ⍝     `GetAllIssues` crashed when there were no issues to report
     ⍝ * 1.2.0
     ⍝   * Instances of GitHubAPIv3 now have a useful display format: for a user "foo" it shows GitHubAPIv3[foo]
     ⍝   * The name of the function `GetPrinciple` was changed to `GetPrincipal`
@@ -52,12 +56,24 @@
         ∇
     :EndProperty
 
+    :Property path2CongaDLLs
+    ⍝ Use this to specify a non-default folder for the Conga DLLs to be used
+    :Access Public Instance
+        ∇ r←Get
+          r←_path2CongaDLLs
+        ∇
+        ∇ Set ipa
+          _path2CongaDLLs←ipa.NewValue
+        ∇
+    :EndProperty
+
     ∇ make1(owner)
       :Access Public Instance
       :Implements Constructor
       _owner←owner
       _personal_access_token←''
       _regEx←'setup_<repoName>_<version>[.\]*.[0-9]{0,6}\.exe'  ⍝ After version there _might_ be a built number
+      _path2CongaDLLs←''
       A←(⊃⊃⎕CLASS ⎕THIS).##.APLTreeUtils2
       H←(⊃⊃⎕CLASS ⎕THIS).##.HttpCommand
       ⎕DF'GitHubAPIv3[',owner,']'
@@ -309,7 +325,7 @@
           ⊃⊃(//)⎕VFI buff
       }
 
-    ∇ data←{parms}GetJson gitURL;h;json;r;noOfPages;i;ind;link;r2;links;H_
+    ∇ data←GetJson gitURL;h;json;r;noOfPages;i;ind;link;r2;links;H_
     ⍝ Takes a URL and returns a namespace, possibly with sub namespaces.
     ⍝ In case the result is virtually paged by the server this function collects all data!
       :If 0=⎕NC'H'
@@ -323,6 +339,9 @@
           'Authorization'h.AddHeader('Bearer ',_personal_access_token)
       :EndIf
       h.URL←EncodeBlank gitURL
+      :If 0<≢_path2CongaDLLs
+          h.CongaPath←_path2CongaDLLs
+      :EndIf
       r←h.Run
       (r.HttpMessage,' (',(⍕r.HttpStatus),')')Assert r.HttpStatus=200
       data←⎕JSON r.Data
