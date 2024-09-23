@@ -10,15 +10,17 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHubAPIv3' '1.3.0-beta-2' '2024-09-13'
+      r←'GitHubAPIv3' '1.3.0' '2024-09-23'
     ∇
 
     ∇ History
       :Access Public Shared
-    ⍝ * 1.3.0 from 2024-09-13
+    ⍝ * 1.3.0 from 2024-09-23
     ⍝   * There was no way to specify a path for the Conga DLLs in GetJson: now there is a field `path2CongaDLLs`
-    ⍝   * Bug Fixes
-    ⍝     The function `GetJson` had an optional left argument `parms` that was never processed: removed.
+    ⍝   * Bug fixes
+    ⍝     * `GetRelease` did not process its (optional) left argument correctly, resulting in a crash.
+    ⍝     * Shared method `GetJson` relied on instance property `path2CongaDLLs`. Can now be specified as left argument
+    ⍝     * The function `GetJson` had an optional left argument `parms` that was never processed: removed.
     ⍝ * 1.2.1 from 2024-07-25
     ⍝   * Bug fixed
     ⍝     `GetAllIssues` crashed when there were no issues to report
@@ -254,18 +256,16 @@
     ⍝ `type` may be one of: <EXE>, <ZIP>, <TAR>. `type` is not case sensitive.\\
     ⍝ The optional left argument `tag` can be used to request a particular version rather than the latest one.
     ⍝ `tag` can be something like `1.2.3` (or `1.2.3.4`) or `v1.2.3` (or `v1.2.3.4`).\\
-    ⍝ Returns the url or an empty vector in case of failure, for example when the given type cannot be detected.
+    ⍝ Returns the download url or an empty vector in case of failure, for example when the given type cannot be detected.
       :Access Public Instance
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/releases'
       ns←GetJson gitPath
       url←''
       type←1 ⎕C type
       'Invalid right argument ("type")'⎕SIGNAL 11/⍨~(⊂type)∊'EXE' 'ZIP' 'TAR'
+      info←GetLatestReleaseInfo repoName
       :If 0=⎕NC'tag'
-          info←GetLatestReleaseInfo repoName
           tag←((1⍴info.tag_name)∊'Vv')↓info.tag_name
-      :Else
-          info←GetReleaseInfoByTagName repoName tag
       :EndIf
       :If (⊂type)∊'ZIP' 'TAR'
           url←('ZIP' 'TAR'⍳⊂type)⊃info.(zipball_url tarball_url)
@@ -325,9 +325,10 @@
           ⊃⊃(//)⎕VFI buff
       }
 
-    ∇ data←GetJson gitURL;h;json;r;noOfPages;i;ind;link;r2;links;H_
+    ∇ data←{path2CongaDLLs}GetJson gitURL;h;json;r;noOfPages;i;ind;link;r2;links;H_
     ⍝ Takes a URL and returns a namespace, possibly with sub namespaces.
     ⍝ In case the result is virtually paged by the server this function collects all data!
+      path2CongaDLLs←{0<⎕NC ⍵:⍎⍵ ⋄ ''}'path2CongaDLLs'
       :If 0=⎕NC'H'
           H_←(⊃⊃⎕CLASS ⎕THIS).##.HttpCommand    ⍝ Called as a shared method
       :Else
@@ -339,8 +340,8 @@
           'Authorization'h.AddHeader('Bearer ',_personal_access_token)
       :EndIf
       h.URL←EncodeBlank gitURL
-      :If 0<≢_path2CongaDLLs
-          h.CongaPath←_path2CongaDLLs
+      :If 0<≢path2CongaDLLs
+          h.CongaPath←path2CongaDLLs
       :EndIf
       r←h.Run
       (r.HttpMessage,' (',(⍕r.HttpStatus),')')Assert r.HttpStatus=200

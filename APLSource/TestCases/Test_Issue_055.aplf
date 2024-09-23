@@ -1,5 +1,5 @@
  R←Test_Issue_055(stopFlag batchFlag);⎕TRAP;data
-⍝
+⍝ Retrieve all issues of "TestRepo" with `GetAllIssues`
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
 
