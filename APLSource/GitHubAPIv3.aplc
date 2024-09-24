@@ -10,11 +10,17 @@
 
     ∇ r←Version
       :Access Public Shared
-      r←'GitHubAPIv3' '1.3.0' '2024-09-23'
+      r←'GitHubAPIv3' '1.3.1' '2024-09-24'
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 1.3.1 from 2024-09-24
+    ⍝   * The instance property `pathToConngaDLLs` has been removed and replaced by an instance field with the same name.
+    ⍝     This syntax change was necessary because some shared methods (`GetAllEndPoints`, `GetRateLimits`) called `GetJson`
+    ⍝     which relies on `pathToCongaDLLs` being defined. It affects you only when you have set `pathToCongaDLLs` as a 
+    ⍝     property of an instance, because that needs changing: assign it to the field of the class instead. 
+    ⍝  * `GetAllTopics` called `GetJson` with a left argument 
     ⍝ * 1.3.0 from 2024-09-23
     ⍝   * There was no way to specify a path for the Conga DLLs in GetJson: now there is a field `path2CongaDLLs`
     ⍝   * Bug fixes
@@ -40,6 +46,8 @@
     ⍝ For information regarding older versions see <https://github.com/aplteam/GitHubAPIv3/releases>
     ∇
 
+    :Field Public Shared  path2CongaDLLs←''
+
     :Property owner
     :Access Public Instance
     ⍝ This is set once with the constructor, therefore no setter
@@ -58,24 +66,12 @@
         ∇
     :EndProperty
 
-    :Property path2CongaDLLs
-    ⍝ Use this to specify a non-default folder for the Conga DLLs to be used
-    :Access Public Instance
-        ∇ r←Get
-          r←_path2CongaDLLs
-        ∇
-        ∇ Set ipa
-          _path2CongaDLLs←ipa.NewValue
-        ∇
-    :EndProperty
-
     ∇ make1(owner)
       :Access Public Instance
       :Implements Constructor
       _owner←owner
       _personal_access_token←''
       _regEx←'setup_<repoName>_<version>[.\]*.[0-9]{0,6}\.exe'  ⍝ After version there _might_ be a built number
-      _path2CongaDLLs←''
       A←(⊃⊃⎕CLASS ⎕THIS).##.APLTreeUtils2
       H←(⊃⊃⎕CLASS ⎕THIS).##.HttpCommand
       ⎕DF'GitHubAPIv3[',owner,']'
@@ -126,13 +122,11 @@
       :EndIf
     ∇
 
-    ∇ rateLimits←GetRateLimits;gitPath;parms
+    ∇ rateLimits←GetRateLimits;gitPath
       :Access Public Shared
     ⍝ Returns information regarding rate limits without hitting the limits
       gitPath←'https://api.github.com/rate_limit'
-      parms←CreateHttpParms
-      parms.Accepted←'application/vnd.github+json"'
-      rateLimits←parms GetJson gitPath
+      rateLimits←GetJson gitPath
     ∇
 
     ∇ topics←GetAllTopics repoName;gitPath;parms;ns;data
@@ -140,9 +134,7 @@
     ⍝ Returns all topics of a given repository.\\
     ⍝ You must use `https://` as protocol or not specify a protocol at all.
       gitPath←'https://api.github.com/repos/',_owner,'/',repoName,'/topics'
-      parms←CreateHttpParms
-      parms.Accepted←'application/vnd.github.mercy-preview+json'
-      data←parms GetJson gitPath
+      data←GetJson gitPath
       topics←data.names
     ∇
 
@@ -325,10 +317,9 @@
           ⊃⊃(//)⎕VFI buff
       }
 
-    ∇ data←{path2CongaDLLs}GetJson gitURL;h;json;r;noOfPages;i;ind;link;r2;links;H_
+    ∇ data←GetJson gitURL;h;json;r;noOfPages;i;ind;link;r2;links;H_
     ⍝ Takes a URL and returns a namespace, possibly with sub namespaces.
     ⍝ In case the result is virtually paged by the server this function collects all data!
-      path2CongaDLLs←{0<⎕NC ⍵:⍎⍵ ⋄ ''}'path2CongaDLLs'
       :If 0=⎕NC'H'
           H_←(⊃⊃⎕CLASS ⎕THIS).##.HttpCommand    ⍝ Called as a shared method
       :Else
