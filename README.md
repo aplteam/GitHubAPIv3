@@ -10,7 +10,8 @@ This class currently offers a selection of methods that are valuable for retriev
 
 There are also some shared method: 
 
-* `CastTagname2Number` takes a tag name and derives a corresponding number based on certain assumptions. This is useful for version comparisons ("greater than..")
+* `CastTagname2Number` takes a tag name and derives a corresponding number based on certain assumptions. This is useful for version comparisons ("greater than...")
+* `GetAllEndPoints` returns the names of all end points; that is REST-speak for function calls
 * `GetRateLimits` provides information about the limitations imposed by GitHub's API
 
 For detailed information from within Dyalog, refer to `]ADoc GitHubAPIv3`.
@@ -21,18 +22,17 @@ For detailed information from within Dyalog, refer to `]ADoc GitHubAPIv3`.
 The following code demonstrates the usage of the `GitHubAPIv3` class:
 
 ```
-OnCheckForUpdates←{
-     G←#.GitHubAPIv3
-    ⍝G.personal_access_token←'<MyAccessToken>'
-     version←'1.0.0'  ⍝ Current version used
-     myGitAPI←⎕NEW G(,⊂'aplteam')
-     data←myGitAPI.GetLatestReleaseInfo'Meddy'
-     gitVersion←G.CastTagname2Number data.tag_name
-     gitVersion≤⌊G.CastTagname2Number 1⊃Version:0⊣TellIsUp2Date ⍬
-     msg←⊂'There is a better version available on GitHub: ',1↓data.tag_name
-     msg,←'' 'Would you like to download the new version?'
-     0=#.CommTools.YesOrNo msg:0
-     0⊣#.APLTreeUtils2.GoToWebPage data.zipball_url
+    G←#.GitHubAPIv3.GitHubAPIv3
+    version←'1.0.0'  ⍝ Current version used
+    myGitAPI←⎕NEW G(,⊂'aplteam')
+   ⍝myGitAPI.personal_access_token←'<your-access-token'  Not required here
+    data←myGitAPI.GetLatestReleaseInfo'Meddy'
+    gitVersion←G.CastTagname2Number data.tag_name
+    gitVersion≤⌊G.CastTagname2Number version:0⊣TellIsUp2Date ⍬
+    msg←⊂'There is a better version available on GitHub: ',1↓data.tag_name
+    msg,←'' 'Would you like to download the new version?'
+    0=#.CommTools.YesOrNo msg:0
+    0⊣#.APLTreeUtils2.GoToWebPage data.zipball_url
  }
 ```
 Note that there is also a `CheckForUpdate` method that takes a repository name and a version number (typically the currently installed/used version). It returns an empty vector if no better version is available, or the better version number.
@@ -41,10 +41,10 @@ Note that there is also a `CheckForUpdate` method that takes a repository name a
 
 At present, authentication and authorization are not required since all methods are read-only.
 
-However, two potential scenarios may require authentication and authorization anyway:
+However, two scenarios may require authentication and authorization anyway:
 
-* In the future methods might be added that require write access like `CreateIssue` etc.
-* Severe limitations on the number of requests per hour without authentication/authorization
+* In the future methods will be added that require write access like `CreateIssue` and `CloseIssue`.
+* There are severe limitations on the number of requests per hour in place without authentication/authorization
 
 To address these scenarios, you must create a personal access token on the GitHub website and assign it to the instance property "personal_access_token".
 
@@ -78,6 +78,7 @@ GetAllTopics            Instance
 GetIssue                Instance 
 GetLatestReleaseInfo    Instance 
 GetLatestTag            Instance 
+GetMyRateLimits         Instance
 GetPrincipal            Instance 
 GetRateLimits           Shared
 GetRelease              Instance 
@@ -85,3 +86,5 @@ GetReleaseInfoByTagName Instance
 History                 Shared 
 Version                 Shared
 ```
+
+

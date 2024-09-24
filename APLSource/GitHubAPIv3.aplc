@@ -15,12 +15,14 @@
 
     ∇ History
       :Access Public Shared
-    ⍝ * 1.3.1 from 2024-09-24
-    ⍝   * The instance property `pathToConngaDLLs` has been removed and replaced by an instance field with the same name.
+    ⍝ * 1.4.0 from 2024-09-24
+    ⍝   * New instance method `GetMyRateLimits` added whbich complements the older shared method `GetRateLimits`
+    ⍝   * BREAKING CHANGE
+    ⍝     The instance property `pathToConngaDLLs` has been removed and replaced by an instance field with the same name.
     ⍝     This syntax change was necessary because some shared methods (`GetAllEndPoints`, `GetRateLimits`) called `GetJson`
-    ⍝     which relies on `pathToCongaDLLs` being defined. It affects you only when you have set `pathToCongaDLLs` as a 
-    ⍝     property of an instance, because that needs changing: assign it to the field of the class instead. 
-    ⍝  * `GetAllTopics` called `GetJson` with a left argument 
+    ⍝     which relies on `pathToCongaDLLs` being defined. It affects you only when you have set `pathToCongaDLLs` as a
+    ⍝     property of an instance, because that needs changing: assign it to the field of the class instead.
+    ⍝  * `GetAllTopics` called `GetJson` with a left argument
     ⍝ * 1.3.0 from 2024-09-23
     ⍝   * There was no way to specify a path for the Conga DLLs in GetJson: now there is a field `path2CongaDLLs`
     ⍝   * Bug fixes
@@ -124,7 +126,19 @@
 
     ∇ rateLimits←GetRateLimits;gitPath
       :Access Public Shared
-    ⍝ Returns information regarding rate limits without hitting the limits
+    ⍝ Returns information regarding the general rate limits (no authentication) without hitting the limits.
+    ⍝ This is about the general rate limits that apply in case the user is not authenticated which applies
+    ⍝ because this is a shared method, so no authentication is implied.\\
+    ⍝ See also the instance method `GetMyRateLimits`.
+      gitPath←'https://api.github.com/rate_limit'
+      rateLimits←GetJson gitPath
+    ∇
+
+    ∇ rateLimits←GetMyRateLimits;gitPath
+      :Access Public Instance
+    ⍝ Returns information regarding rate limits without hitting the limits. This is an instance method,
+    ⍝ meaning that it returns the rate limits for the currently used authentication token.
+    ⍝ See also the shared method `GetRateLimits`.
       gitPath←'https://api.github.com/rate_limit'
       rateLimits←GetJson gitPath
     ∇

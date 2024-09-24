@@ -1,4 +1,4 @@
- R←Test_Misc_060(stopFlag batchFlag);⎕TRAP;limitInfo
+ R←Test_Limits_001(stopFlag batchFlag);⎕TRAP;limitInfo
 ⍝ Exercise the `GetRateLimits` method.
  ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
  R←T._Failed
@@ -6,6 +6,7 @@
  limitInfo←∆MyGitHubAPI.GetRateLimits
  →T.PassesIf∧/'limit' 'remaining' 'reset' 'resource' 'used'∊limitInfo.rate.⎕NL-2
  →T.PassesIf∧/'core' 'search'∊limitInfo.resources.⎕NL-9
+ →T.PassesIf 500>limitInfo.rate.limit
 
  R←T._OK
 ⍝Done

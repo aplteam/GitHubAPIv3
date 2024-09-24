@@ -1,0 +1,17 @@
+ R←Test_Limits_002(stopFlag batchFlag);⎕TRAP;limitInfo
+⍝ Exercise the `GetMyRateLimits` method.
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ :If ~FilesAndDirs.IsFile ##.TatinVars.HOME,'/personal_access_token.txt'
+     R←T._NotApplicable
+     :Return
+ :EndIf
+
+ limitInfo←∆MyGitHubAPI.GetMyRateLimits
+ →T.PassesIf∧/'limit' 'remaining' 'reset' 'used'∊limitInfo.rate.⎕NL-2
+ →T.PassesIf∧/'core' 'search'∊limitInfo.resources.⎕NL-9
+ →T.PassesIf 1000<limitInfo.rate.limit
+
+ R←T._OK
+⍝Done
