@@ -15,7 +15,7 @@
 
     ∇ History
       :Access Public Shared
-    ⍝ * 1.5.0 from 2024-10-16
+    ⍝ * 1.5.0 from 2024-11-16
     ⍝   * `CheckForUpdate` can now handle beta versions on the client side (on GitHub, betas are not supported)
     ⍝ * 1.4.0 from 2024-09-24
     ⍝   * New instance method `GetMyRateLimits` added whbich complements the older shared method `GetRateLimits`
