@@ -1,15 +1,16 @@
- Make flag;M;C;path;zipFilename;res;version;cfg;parms
-:If flag
-    M←⎕SE.MakeHelpers
-    C←##.CiderConfig
-    path←C.HOME,'/',C.CIDER.distributionFolder
-    cfg←⎕JSON⍠('Dialect' 'JSON5')⊢⊃⎕NGET C.HOME,'/apl-package.json'
-    version←M.CompileVersionNumberPattern cfg
-    M.RecreateFolder path
-    parms←⎕SE.Tatin.CreateBuildParms C.HOME
-    parms.targetPath←path
-    parms.version←version
-    zipFilename←⎕SE.Tatin.BuildPackage parms
-    ⎕←'*** New version build successfully:',M.CR,'   ',zipFilename
-:EndIf
+ Make flag;M;C;path;zipFilename;res;version;cfg;parms;cfgFilename
+ :If flag
+     M←⎕SE.MakeHelpers
+     C←##.CiderConfig
+     path←C.HOME,'/',C.CIDER.distributionFolder
+     cfgFilename←C.HOME,'/apl-package.json'
+     cfg←⎕JSON⍠('Dialect' 'JSON5')⊢⊃⎕NGET cfgFilename
+     cfgFilename M.EditVersion cfg
+     M.RecreateFolder path
+     parms←⎕SE.Tatin.CreateBuildParms C.HOME
+     parms.targetPath←path
+     parms.version←{⍵↑⍨¯1+⍵⍳'+'}##.GitHubAPIv3.Version
+     zipFilename←⎕SE.Tatin.BuildPackage parms
+     ⎕←'*** New version build successfully:',M.CR,'   ',zipFilename
+ :EndIf
 ⍝Done
