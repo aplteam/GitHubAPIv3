@@ -12,13 +12,13 @@
       :Access Public Shared
     ⍝ Returns the version number from TatinVars
     ⍝ See also `History`
-      r←''
+      r←'GitHubAPIv3' '' '2025-01-25'
       :If 0<##.⎕NC'TatinVars.CONFIG'
-          r←(⎕JSON⍠('Dialect' 'JSON5')⊢##.TatinVars.CONFIG).version
+          (2⊃r)←(⎕JSON⍠('Dialect' 'JSON5')⊢##.TatinVars.CONFIG).version
       :Else
           ⍝ When a script is not loaded with Tatin, there will be no namespace `TatinVars`.
           ⍝ In such cases we cannot provide a version number, so we return an empty char vector
-          r←''
+     
       :EndIf
     ∇
 

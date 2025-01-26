@@ -4,6 +4,7 @@
 ⍝ 3. Processes the code coverage data (if collected)
 ⍝ 4. Asks the user whether the code coverage report should be put on view
  Prepare
+ T.codeCoverage.ignore←⊂'#.GitHubAPIv3.GitHubAPIv3.∆List'
  T.Run 1
  :If 0<≢T.codeCoverage
      {}CodeCoverage.ProcessData T.codeCoverage.filename
