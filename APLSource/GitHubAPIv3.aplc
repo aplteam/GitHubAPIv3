@@ -13,7 +13,7 @@
     ⍝ See also `History`
       :Access Public Shared
       :If 0<##.⎕NC'TatinVars.CONFIG'
-          r←(⎕JSON⍠('Dialect' 'JSON5')⊢.##.TatinVars.CONFIG).version
+          r←(⎕JSON⍠('Dialect' 'JSON5')⊢##.TatinVars.CONFIG).version
       :ElseIf 0<##.##.⎕NC'TatinVars.CONFIG'
           r←(⎕JSON⍠('Dialect' 'JSON5')⊢##.##.TatinVars.CONFIG).version
       :Else
