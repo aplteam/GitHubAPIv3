@@ -9,21 +9,26 @@
     ⎕IO←1 ⋄ ⎕ML←1
 
     ∇ r←Version
-      :Access Public Shared
-    ⍝ Returns the version number from TatinVars
+    ⍝ Returns the version number from `TatinVars` if possible.
     ⍝ See also `History`
-      r←'GitHubAPIv3' '' '2025-01-25'
+      :Access Public Shared
       :If 0<##.⎕NC'TatinVars.CONFIG'
-          (2⊃r)←(⎕JSON⍠('Dialect' 'JSON5')⊢##.TatinVars.CONFIG).version
+          r←(⎕JSON⍠('Dialect' 'JSON5')⊢.##.TatinVars.CONFIG).version
+      :ElseIf 0<##.##.⎕NC'TatinVars.CONFIG'
+          r←(⎕JSON⍠('Dialect' 'JSON5')⊢##.##.TatinVars.CONFIG).version
       :Else
-          ⍝ When a script is not loaded with Tatin, there will be no namespace `TatinVars`.
-          ⍝ In such cases we cannot provide a version number, so we return an empty char vector
-     
+    ⍝ When a script was not loaded with Tatin, there will be no namespace `TatinVars`.
+    ⍝ In such cases we cannot provide a version number, so we return just ''.
+          r←''
       :EndIf
     ∇
 
     ∇ History
       :Access Public Shared
+    ⍝ * 2.0.0 from 2025-04-09
+    ⍝   * Potentially breaking: `Version` now returns a char vector temming from the package config file
+    ⍝   * Packages updated
+    ⍝   * "Make" improved
     ⍝ * 1.6.0 from 2025-01-025
     ⍝   * CommTools removed as a dependency - it was only required for tests
     ⍝   * `Version` now returns the package config file setting
@@ -43,21 +48,6 @@
     ⍝     * `GetRelease` did not process its (optional) left argument correctly, resulting in a crash.
     ⍝     * Shared method `GetJson` relied on instance property `path2CongaDLLs`. Can now be specified as left argument
     ⍝     * The function `GetJson` had an optional left argument `parms` that was never processed: removed.
-    ⍝ * 1.2.1 from 2024-07-25
-    ⍝   * Bug fixed
-    ⍝     `GetAllIssues` crashed when there were no issues to report
-    ⍝ * 1.2.0
-    ⍝   * Instances of GitHubAPIv3 now have a useful display format: for a user "foo" it shows GitHubAPIv3[foo]
-    ⍝   * The name of the function `GetPrinciple` was changed to `GetPrincipal`
-    ⍝   * When Assert signals an error not only the message but also the HTTP code is returned as in "Not found (404)"
-    ⍝   * Package dependencies updated
-    ⍝   * Bug fixes
-    ⍝     * The DF of an issue was wrong ("Issues" rather than "Issue"). While on it the issue number was added.
-    ⍝ * 1.1.0
-    ⍝   Dependencies updated: HttpCommand and APLTreeUtil2
-    ⍝ * 1.0.1
-    ⍝   * Domain of the function `CastTagname2Number` extended: Major and minor nmber might both carry 3 digits,
-    ⍝     while a build number might carry up to 5 digits.
     ⍝\\
     ⍝ For information regarding older versions see <https://github.com/aplteam/GitHubAPIv3/releases>
     ∇
