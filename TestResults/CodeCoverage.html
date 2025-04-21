@@ -127,7 +127,7 @@ ul li, ol li {margin: 8pt 3pt;}
 <tr><th>Executed at</th><th>APLVersion</th><th>Memory (MB)</th></tr>
 </thead>
 <tbody>
-<tr><td>2025-04-20 11:32:05</td><td>Windows-64 ⋄ 19.0.51432.0 ⋄ W ⋄ Development ⋄ Unicode</td><td>113</td></tr>
+<tr><td>2025-04-21 19:02:24</td><td>Windows-64 ⋄ 19.0.51432.0 ⋄ W ⋄ Development ⋄ Unicode</td><td>496</td></tr>
 </tbody>
 </table>
 <p>Overall 96% of the testable code is covered.</p>
@@ -266,15 +266,16 @@ $(document).ready(function() {
 </script>
 <h2>Listings</h2>
 <code class="header" id="listing_1">#.GitHubAPIv3.GitHubAPIv3.CreateHttpParms &mdash; 0%<a class="float-right no-print no-underline top-links" href="#top" title="Go to the top of the document">&#8607;</a><a  class="float-right no-print no-underline top-links" href="#partly-covered" title="Go to the beginning of 'Partly-covered'">↑</a></code>
-<div class="code-block"><code> r←CreateHttpParms</code>
-<code> [1]     ⍝ Creates a parameter space that can be passed to some method.</code>
-<code> [2]     ⍝ Currently this is private. We might need to change this once we introduce methods</code>
-<code> [3]     ⍝ that actually write data, like, say, `CreateIssue`.</code>
-<code> [4]     ⍝ :Access Public Instance</code>
-<code class="emphasize">→[5]  r←⎕NS''</code>
-<code class="emphasize">→[6]  r.Accepted←'Accept: application/vnd.github.v3+json'</code>
-<code class="emphasize">→[7]  r.Method←'GET'</code>
-<code class="emphasize">→[8]  r.Body←''</code>
+<div class="code-block"><code>  r←CreateHttpParms</code>
+<code> [1]      ⍝ Creates a parameter space that can be passed to some method.</code>
+<code> [2]      ⍝ Currently this is private. We might need to change this once we introduce methods</code>
+<code> [3]      ⍝ that actually write data, like, say, `CreateIssue`.</code>
+<code> [4]      ⍝ :Access Public Instance</code>
+<code class="emphasize">→[5]   r←⎕NS''</code>
+<code class="emphasize">→[6]   r.Accepted←'Accept: application/vnd.github.v3+json'</code>
+<code class="emphasize">→[7]   r.Method←'GET'</code>
+<code class="emphasize">→[8]   r.Body←''</code>
+<code> [9]      ⍝CodeCoverage:ignore⍝</code>
 </div>
 <code class="header" id="listing_2">#.GitHubAPIv3.GitHubAPIv3.Version &mdash; 67%<a class="float-right no-print no-underline top-links" href="#top" title="Go to the top of the document">&#8607;</a><a  class="float-right no-print no-underline top-links" href="#partly-covered" title="Go to the beginning of 'Partly-covered'">↑</a></code>
 <div class="code-block"><code>  r←Version</code>
@@ -348,22 +349,23 @@ $(document).ready(function() {
 <code class="header" id="listing_8">#.GitHubAPIv3.GitHubAPIv3.History &mdash; 100%<a class="float-right no-print no-underline top-links" href="#top" title="Go to the top of the document">&#8607;</a><a  class="float-right no-print no-underline top-links" href="#partly-covered" title="Go to the beginning of 'Partly-covered'">↑</a></code>
 <div class="code-block"><code>  History</code>
 <code> [1]   :Access Public Shared</code>
-<code> [2]      ⍝ * 2.1.0 from 2025-04-20</code>
-<code> [3]      ⍝   * Function `GetIssueStats` added</code>
+<code> [2]      ⍝ * 2.1.0 from 2025-04-21</code>
+<code> [3]      ⍝   * Function `GetIssues` added</code>
 <code> [4]      ⍝   * Function `GetLabelStats` added</code>
 <code> [5]      ⍝   * `∆QuickView` (injected into issues) does not require an argument anymore &amp; returns the creation date now as well</code>
-<code> [6]      ⍝   * Bug fixes</code>
-<code> [7]      ⍝     * Typo fixed in `Version`</code>
-<code> [8]      ⍝     * "Owner" was accepted by `⎕NEW` when empty - makes no sense</code>
-<code> [9]      ⍝ * 2.0.0 from 2025-04-09</code>
-<code> [10]     ⍝   * Potentially breaking: `Version` now returns a char vector stemming from the package config file</code>
-<code> [11]     ⍝   * Packages updated</code>
-<code> [12]     ⍝   * "Make" improved</code>
-<code> [13]     ⍝ * 1.6.0 from 2025-01-025</code>
-<code> [14]     ⍝   * CommTools removed as a dependency - it was only required for tests</code>
-<code> [15]     ⍝   * `Version` now returns the package config file setting</code>
-<code> [16]     ⍝\\</code>
-<code> [17]     ⍝ For information regarding older versions see &lt;https://github.com/aplteam/GitHubAPIv3/releases&gt;</code>
+<code> [6]      ⍝   * `∆Details` (injected into issues) does not require an argument anymore</code>
+<code> [7]      ⍝   * Bug fixes</code>
+<code> [8]      ⍝     * Typo fixed in `Version`</code>
+<code> [9]      ⍝     * Empty "owner" was accepted by `⎕NEW` - makes no sense</code>
+<code> [10]     ⍝ * 2.0.0 from 2025-04-09</code>
+<code> [11]     ⍝   * Potentially breaking: `Version` now returns a char vector stemming from the package config file</code>
+<code> [12]     ⍝   * Packages updated</code>
+<code> [13]     ⍝   * "Make" improved</code>
+<code> [14]     ⍝ * 1.6.0 from 2025-01-025</code>
+<code> [15]     ⍝   * CommTools removed as a dependency - it was only required for tests</code>
+<code> [16]     ⍝   * `Version` now returns the package config file setting</code>
+<code> [17]     ⍝\\</code>
+<code> [18]     ⍝ For information regarding older versions see &lt;https://github.com/aplteam/GitHubAPIv3/releases&gt;</code>
 </div>
 <code class="header" id="listing_9">#.GitHubAPIv3.GitHubAPIv3.make1 &mdash; 100%<a class="float-right no-print no-underline top-links" href="#top" title="Go to the top of the document">&#8607;</a><a  class="float-right no-print no-underline top-links" href="#partly-covered" title="Go to the beginning of 'Partly-covered'">↑</a></code>
 <div class="code-block"><code> make1(owner)</code>

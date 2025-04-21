@@ -349,6 +349,7 @@
     ⍝ Currently this is private. We might need to change this once we introduce methods
     ⍝ that actually write data, like, say, `CreateIssue`.
     ⍝ :Access Public Instance
+    ⍝CodeCoverage:ignore⍝
       r←⎕NS''
       r.Accepted←'Accept: application/vnd.github.v3+json'
       r.Method←'GET'
