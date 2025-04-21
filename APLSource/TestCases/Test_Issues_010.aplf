@@ -1,0 +1,11 @@
+ R←Test_Issues_010(stopFlag batchFlag);⎕TRAP;data
+⍝ Get a an issue statistic: a matrix with all issues, their creation date and and their assigned labels
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ data←∆MyGitHubAPI.GetIssues'TestRepo'
+ →T.PassesIf 2=⍴⍴data
+ →T.PassesIf 4=2⊃⍴data
+
+ R←T._OK
+⍝Done

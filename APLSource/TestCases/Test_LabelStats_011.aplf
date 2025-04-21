@@ -1,0 +1,11 @@
+ R←Test_LabelStats_011(stopFlag batchFlag);⎕TRAP;data
+⍝ Get a label statistic from a repo that has no issues aand therefore no assigned labels
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ data←∆MyGitHubAPI.GetLabelStats'TestRepoWithoutIssues'
+ →T.PassesIf 2=⍴⍴data
+ →T.PassesIf 0=≢data
+
+ R←T._OK
+⍝Done

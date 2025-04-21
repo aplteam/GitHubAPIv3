@@ -1,0 +1,12 @@
+ R←Test_LabelStats_010(stopFlag batchFlag);⎕TRAP;data
+⍝ Get a label statistic: a matrix with all labels assigned to issues and a count
+ ⎕TRAP←(999 'C' '. ⍝ Deliberate error')(0 'N')
+ R←T._Failed
+
+ data←∆MyGitHubAPI.GetLabelStats'TestRepo'
+ →T.PassesIf 2=⍴⍴data
+ →T.PassesIf∧/⊃,/{⊃' '=1↑0⍴⍵}¨data[;1]
+ →T.PassesIf∧/⊃,/{⊃0=1↑0⍴⍵}¨data[;2]
+
+ R←T._OK
+⍝Done
